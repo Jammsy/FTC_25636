@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -80,7 +81,8 @@ public class compModeOne extends LinearOpMode {
     private DcMotor rightBackDrive = null;
     private DcMotor pivotOne = null;
     private DcMotor pivotTwo = null;
-
+    private DcMotor linSlideLeft = null;
+    private DcMotor linSlideRight = null;
 
     @Override
     public void runOpMode() {
@@ -91,16 +93,34 @@ public class compModeOne extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBackDrive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
+
         pivotOne = hardwareMap.get(DcMotor.class, "pivotOne");
         pivotTwo = hardwareMap.get(DcMotor.class, "pivotTwo");
+
+        linSlideLeft = hardwareMap.get(DcMotor.class, "linSlideLeft");
+        linSlideRight = hardwareMap.get(DcMotor.class, "linSlideRight");
 
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
         pivotOne.setDirection(DcMotor.Direction.REVERSE);
         pivotTwo.setDirection(DcMotor.Direction.REVERSE);
+
+        linSlideRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        linSlideLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        leftFrontDrive.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
+        leftBackDrive.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
+        rightFrontDrive.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
+        rightBackDrive.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
+        rightFrontDrive.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
+        pivotOne.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
+        pivotTwo.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
+        linSlideRight.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
+        linSlideLeft.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
 
 
         // Wait for the game to start (driver presses START)
