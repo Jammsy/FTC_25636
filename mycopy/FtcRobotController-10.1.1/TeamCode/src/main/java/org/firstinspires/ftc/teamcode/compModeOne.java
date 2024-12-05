@@ -225,6 +225,11 @@ public class compModeOne extends LinearOpMode {
             telemetry.addData("Intake Position", "%3f", intakeServo.getPosition());
             telemetry.update();
 
+            //Rumble controller after 2 Minutes
+            if(runtime.seconds() > 120){
+                gamepad1.rumble(3000);
+            }
+
         }
     }
 }

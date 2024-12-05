@@ -53,22 +53,19 @@ public class basicAuto extends LinearOpMode {
         pivotOne.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
         pivotTwo.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
 
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
+        telemetry.addData("Encoders Reset Debug FL/FR: ", "%4.2f, %4.2f", leftFrontDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition());
+        telemetry.addData("                     Bl/BR: ", "%4.2f, %4.2f", leftBackDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
         telemetry.update();
 
         waitForStart();
@@ -140,6 +137,10 @@ public class basicAuto extends LinearOpMode {
             pivotTwo.setPower(0.6);
             //intakeServo.setPosition(0.75);
 
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //Show status, DT wheel power, and slide / intake debug
             telemetry.addData("Status", "Run Time: " + runtime.toString());
