@@ -30,7 +30,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -43,9 +42,9 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@Autonomous
+@TeleOp(name="compModeTwo_iterative", group="Iterative OpMode")
 //@Disabled
-public class basicAuto extends OpMode
+public class compModeTwo_Iterative extends OpMode
 {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -61,9 +60,7 @@ public class basicAuto extends OpMode
     private IMU imu = null;
     private double intakeForwardPosition = 0.15;
     private double intakeBackwardPosition = 1;
-    private double pivotPos = 100000;
-    private int dtForwardPos = 0;
-    private int dtBackPos = 0;
+    private double pivotMax = 100000;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -141,7 +138,7 @@ public class basicAuto extends OpMode
     @Override
     public void start() {
         runtime.reset();
-        intakeClose();
+        resetYaw();
     }
 
     /*
@@ -149,32 +146,56 @@ public class basicAuto extends OpMode
      */
     @Override
     public void loop() {
+        if(gamepad1.options) resetYaw();
+
+
+        //DT method code
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        driveTrain(gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, botHeading);
+
+        if(gamepad1.right_trigger > 0.2) {
+            pivotUp(pivotOne.getCurrentPosition());
+        } else if(gamepad1.left_trigger > 0.2) {
+            pivotDown();
+        }  else {
+            pivotStop();
+        }
+
+        if(gamepad1.y)intakeClose(); else intakeOpen();
+
+        if(gamepad1.left_bumper) intakeForward();
+        else if (gamepad1.right_bumper) intakeStow();
 
     }
-    public void driveTrain(int pos){
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftFrontDrive.setTargetPosition(pos);
+    public void driveTrain(double y, double x, double rx, double botHeading){
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftBackDrive.setTargetPosition(pos);
+        rotX = rotX * 1.1;  // Counteract imperfect strafing
 
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFrontDrive.setTargetPosition(pos);
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
 
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBackDrive.setTargetPosition(pos);
+        leftFrontDrive.setPower(frontLeftPower);
+        leftBackDrive.setPower(backLeftPower);
+        rightFrontDrive.setPower(frontRightPower);
+        rightBackDrive.setPower(backRightPower);
     }
 
     public void resetSlideEncoders(){
-        linSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        linSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            linSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            linSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            linSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            linSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public void resetYaw(){
         imu.resetYaw();
     }
-    public void pivotUp(){
+    public void pivotUp(double pos){
+        //maybe add a encoder hold position that updates at all times when you want the arm to move
             pivotOne.setPower(0.65);
             pivotTwo.setPower(0.65);
     }
@@ -202,6 +223,13 @@ public class basicAuto extends OpMode
     public void slideOut(){
         linSlideLeft.setPower(0.6);
         linSlideRight.setPower(0.6);
+    }
+
+    public void voidslideInt(int pos){
+        while(pos > 0){
+            linSlideLeft.setPower(-0.4);
+            linSlideLeft.setPower(-0.4);
+        }
     }
 
     @Override

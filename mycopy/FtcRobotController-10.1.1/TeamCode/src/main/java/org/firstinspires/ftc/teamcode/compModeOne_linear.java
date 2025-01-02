@@ -1,24 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 //import com.qualcomm.robotcore.hardware.
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name="Basic: compModeOne", group="Linear OpMode")
+@TeleOp(name="Basic: compModeOne_linear", group="Linear OpMode")
 //@Disabled
-public class compModeOne extends LinearOpMode {
+public class compModeOne_linear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -31,7 +27,12 @@ public class compModeOne extends LinearOpMode {
     private DcMotor linSlideLeft = null;
     private DcMotor linSlideRight = null;
     private Servo intakeServo = null;
+    private Servo intakePivot = null;
     private IMU imu = null;
+    private double intakeForwardPosition = 0.15;
+    private double intakeBackwardPosition = 1;
+    private double slideLCurrentPos = 0.0;
+    private double slideRCurrentPos = 0.0;
 
     @Override
     public void runOpMode() {
@@ -55,6 +56,7 @@ public class compModeOne extends LinearOpMode {
         linSlideLeft = hardwareMap.get(DcMotor.class, "linSlideLeft");
         linSlideRight = hardwareMap.get(DcMotor.class, "linSlideRight");
         intakeServo = hardwareMap.get(Servo.class, "intakeServo");
+        intakePivot = hardwareMap.get(Servo.class, "intakePivot");
 
         //Motor Direction Set
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -65,24 +67,31 @@ public class compModeOne extends LinearOpMode {
         pivotTwo.setDirection(DcMotor.Direction.FORWARD);
         linSlideRight.setDirection(DcMotorSimple.Direction.FORWARD);
         linSlideLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakePivot.setDirection(Servo.Direction.REVERSE);
 
         //Breaking modes for motors
-        leftFrontDrive.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
+        /*leftFrontDrive.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
         leftBackDrive.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
         rightFrontDrive.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
         rightBackDrive.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
-        rightFrontDrive.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
+        rightFrontDrive.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));*/
         pivotOne.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
         pivotTwo.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
-        linSlideRight.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
-        linSlideLeft.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
 
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        linSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        linSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slideLCurrentPos = linSlideLeft.getCurrentPosition();
+        slideRCurrentPos = linSlideLeft.getCurrentPosition();
+
+        imu.resetYaw();
 
         waitForStart();
         runtime.reset();
@@ -93,7 +102,9 @@ public class compModeOne extends LinearOpMode {
             //double max;
             double pivot;
             double slide;
-            double intake;
+            slideLCurrentPos = linSlideLeft.getCurrentPosition();
+            slideRCurrentPos = linSlideRight.getCurrentPosition();
+            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
 //Robot Centric Control within comment bracket.
             /*// POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
@@ -160,11 +171,16 @@ public class compModeOne extends LinearOpMode {
             if (gamepad1.options) {
                 imu.resetYaw();
             }
+            if(gamepad1.dpad_left){
+                linSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                linSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                linSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                linSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
 
-            double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = -gamepad1.left_stick_x;
+            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+            double x = gamepad1.left_stick_x;
             double rx = -gamepad1.right_stick_x;
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
             // Rotate the movement direction counter to the bot's rotation
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -187,28 +203,35 @@ public class compModeOne extends LinearOpMode {
             rightBackDrive.setPower(backRightPower);
 
             //pivot logic
-            if(gamepad1.right_trigger > 0.3){
-                pivot = gamepad1.right_trigger;
-            }else if(gamepad1.left_trigger > 0.3) {
-                pivot = -(gamepad1.left_trigger);
+            if(gamepad1.left_trigger > 0.2){
+                pivot = gamepad1.left_trigger;
+            }else if(gamepad1.right_trigger > 0.2) {
+                pivot = -(gamepad1.right_trigger);
             }else{
                 pivot = 0;
             }
 
-            //linear slide logic
-            if(gamepad1.dpad_up){
-                slide = 1;
-            }else if(gamepad1.dpad_down){
-                slide = -1;
+            //linear og slide logic
+            if(gamepad1.dpad_up && (double)(linSlideRight.getCurrentPosition()) < 3000 && (double)(linSlideLeft.getCurrentPosition()) < 3000){
+                slide = 0.6;
+            }else if(gamepad1.dpad_down && (double)(linSlideRight.getCurrentPosition()) > 1){
+                slide = -0.6;
             }else{
                 slide = 0;
             }
 
+
             //intake logic
-            if(gamepad1.a){
-                intake = 0.75;
+            if(gamepad1.y){
+                intakeServo.setPosition(0.75);
             }else{
-                intake = 0.25;
+                intakeServo.setPosition(0.65);
+            }
+
+            if(gamepad1.left_bumper){
+                intakePivot.setPosition(intakeForwardPosition);
+            } else if (gamepad1.right_bumper){
+                intakePivot.setPosition(intakeBackwardPosition);
             }
 
             //Set Power To motors as well as reset defaults
@@ -216,20 +239,23 @@ public class compModeOne extends LinearOpMode {
             pivotTwo.setPower(pivot);
             linSlideRight.setPower(slide);
             linSlideLeft.setPower(slide);
-            intakeServo.setPosition(intake);
+
 
             //Show status, DT wheel power, and slide / intake debug
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
-            telemetry.addData("Intake Position", "%3f", intakeServo.getPosition());
+            telemetry.addData("Slide Pos R/L", "%2f , %2f", (double)(linSlideRight.getCurrentPosition()), (double)(linSlideLeft.getCurrentPosition()));
+            telemetry.addData("Intake Pivot Position", "%s", intakePivot.getPosition());
+            telemetry.addData("Heading", "%s", botHeading);
+            telemetry.addData("Pivot Stall Power", "%s, %s", pivotOne.getPower(), pivotTwo.getPower());
             telemetry.update();
 
             //Rumble controller after 2 Minutes
-            if(runtime.seconds() > 120){
-                gamepad1.rumble(3000);
-            }
-
+           /* if(runtime.seconds() > 120){
+                gamepad1.rumble(300);
+                gamepad1.stopRumble();
+            }*/
         }
     }
 }
