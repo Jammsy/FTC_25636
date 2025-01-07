@@ -45,7 +45,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Autonomous
 //@Disabled
-public class basicAuto extends OpMode
+public class    basicAuto extends OpMode
 {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
