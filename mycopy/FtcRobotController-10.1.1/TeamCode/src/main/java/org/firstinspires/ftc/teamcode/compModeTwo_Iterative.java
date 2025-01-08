@@ -23,11 +23,10 @@ public class compModeTwo_Iterative extends OpMode{
     private DcMotor linSlideLeft = null;
     private DcMotor linSlideRight = null;
     private Servo intakeServo = null;
-    private Servo intakePivot = null;
     private IMU imu = null;
-    private double slideMax = 5000;
-
-    private enum PivotPositions {LOW_RUNG, HIGH_RUNG, LOW_BASKET}
+    private double slideMax = -5000;
+    private int ZERO=0, LOW_RUNG=425, HIGH_RUNG=560;
+    private int pivotPose = 0;
 
 
     @Override
@@ -59,25 +58,64 @@ public class compModeTwo_Iterative extends OpMode{
         pivotOne.setDirection(DcMotorSimple.Direction.FORWARD);
         pivotTwo.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        pivotOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivotTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        linSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        linSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
     }
 
     @Override
     public void start() {
-        intakeOpen();
+        resetSlideEncoders();
         runtime.reset();
         resetYaw();
     }
 
     @Override
     public void loop() {
-        if (gamepad1.options) resetYaw();
+        boolean lowRungButton = gamepad1.dpad_up;
+        boolean highRungButton = gamepad1.dpad_right;
+        boolean slideOutTrigger = gamepad1.right_bumper;
+        boolean slideInTrigger = gamepad1.left_bumper;
+        boolean intakeCloseButton = gamepad1.triangle;
+        boolean intakeOpenButton = gamepad1.cross;
 
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         driveTrain(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x, botHeading);
 
+        if (lowRungButton) {
+            pivotPose = LOW_RUNG;
+        }else if(highRungButton){
+            pivotPose = HIGH_RUNG;
+        }else{
+            pivotPose = ZERO;
+        }
+
+        if(slideOutTrigger){
+            linSlideLeft.setPower(0.6);
+            linSlideRight.setPower(0.6);
+            //slideOut(linSlideLeft.getCurrentPosition(), slideMax);
+        }else if(slideInTrigger){
+            linSlideLeft.setPower(-0.6);
+            linSlideRight.setPower(-0.6);
+            //slideIn(linSlideLeft.getCurrentPosition());
+        }
+
+        if(intakeCloseButton){
+            intakeClose();
+        }else if(intakeOpenButton){
+            intakeOpen();
+        }
+
+        if (gamepad1.options) resetYaw();
+
+        pivotRun(pivotPose);
+
         telemetry.addData("Pivot Encoder Pos", "%s, %s", pivotOne.getCurrentPosition(), pivotTwo.getCurrentPosition());
+        telemetry.addData("Lin Slide Encoder L | R", "%s, %s", linSlideLeft.getCurrentPosition(), linSlideRight.getCurrentPosition());
         telemetry.update();
     }
 
@@ -112,42 +150,57 @@ public class compModeTwo_Iterative extends OpMode{
         pivotTwo.setPower(0);
     }
 
-        public void resetSlideEncoders() {
-            linSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            linSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            linSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Usually you want to use encoders
-            linSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Unless you are using a limit switch
-        }
+    public void resetSlideEncoders() {
+        linSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Usually you want to use encoders
+        linSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Unless you are using a limit switch
+    }
 
-        public void resetYaw() {
-            imu.resetYaw();
-        }
 
-        public void intakeOpen() {
-            intakePivot.setPosition(0.75);
-        }
+    public void resetYaw() {
+        imu.resetYaw();
+    }
 
-        public void intakeClose() {
-            intakeServo.setPosition(0.65);
-        }
+    public void intakeOpen() {
+        intakeServo.setPosition(0.75);
+    }
 
-        public void slideOut(int pos, double max) {
-            if (pos < max) {
-                linSlideLeft.setPower(0.6);
-                linSlideRight.setPower(0.6);
-            } else {
-                linSlideLeft.setPower(0);
-                linSlideRight.setPower(0);
-            }
-        }
-
-        public void slideIn(int slidePos) {
-            if (slidePos > 0) {
-                linSlideLeft.setPower(-0.6); // Made negative to retract
-                linSlideRight.setPower(-0.6);
-            } else {
-                linSlideLeft.setPower(0);
-                linSlideRight.setPower(0);
-            }
+    public void intakeClose() {
+        intakeServo.setPosition(0.1);
+    }
+    public void pivotRun(int e){
+        if(e != 0) {
+            pivotOne.setPower(0.6);
+            pivotTwo.setPower(0.6);
+            pivotOne.setTargetPosition(e);
+            pivotTwo.setTargetPosition(e);
+            pivotOne.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            pivotTwo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }else{
+            pivotOne.setPower(0);
+            pivotTwo.setPower(0);
+            pivotOne.setTargetPosition(e);
+            pivotTwo.setTargetPosition(e);
         }
     }
+    public void slideOut(int pos, double max) {
+        if (pos < max) {
+            linSlideLeft.setPower(0.6);
+            linSlideRight.setPower(0.6);
+        } else {
+            linSlideLeft.setPower(0);
+            linSlideRight.setPower(0);
+        }
+    }
+
+    public void slideIn(int slidePos) {
+        if (slidePos > 0) {
+            linSlideLeft.setPower(-0.6); // Made negative to retract
+            linSlideRight.setPower(-0.6);
+        } else {
+            linSlideLeft.setPower(0);
+            linSlideRight.setPower(0);
+        }
+    }
+}
