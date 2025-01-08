@@ -94,7 +94,7 @@ public class compModeTwo_Iterative extends OpMode{
             pivotPose = ZERO;
         }
 
-        if(slideOutTrigger){
+        if(slideOutTrigger && (linSlideLeft.getCurrentPosition() != 5000)){
             linSlideLeft.setPower(0.6);
             linSlideRight.setPower(0.6);
             //slideOut(linSlideLeft.getCurrentPosition(), slideMax);
