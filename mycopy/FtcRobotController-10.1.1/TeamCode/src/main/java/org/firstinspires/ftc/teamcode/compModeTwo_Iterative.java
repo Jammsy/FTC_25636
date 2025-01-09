@@ -25,7 +25,7 @@ public class compModeTwo_Iterative extends OpMode{
     private Servo intakeServo = null;
     private IMU imu = null;
     private double slideMax = -5000;
-    private int ZERO=0, LOW_RUNG=425, HIGH_RUNG=560;
+    private int ZERO= 0, LOW_RUNG= 425, HIGH_RUNG= 590,LOW_BASET = 640, GROUND = 105;
     private int pivotPose = 0;
 
 
@@ -78,6 +78,8 @@ public class compModeTwo_Iterative extends OpMode{
     public void loop() {
         boolean lowRungButton = gamepad1.dpad_up;
         boolean highRungButton = gamepad1.dpad_right;
+        boolean groundButton = gamepad1.dpad_down;
+        boolean lowBasketButton = gamepad1.dpad_left;
         boolean slideOutTrigger = gamepad1.right_bumper;
         boolean slideInTrigger = gamepad1.left_bumper;
         boolean intakeCloseButton = gamepad1.triangle;
@@ -90,18 +92,25 @@ public class compModeTwo_Iterative extends OpMode{
             pivotPose = LOW_RUNG;
         }else if(highRungButton){
             pivotPose = HIGH_RUNG;
+        }else if(groundButton) {
+            pivotPose = GROUND;
+        }else if(lowBasketButton){
+                pivotPose = LOW_BASET;
         }else{
             pivotPose = ZERO;
         }
 
-        if(slideOutTrigger && (linSlideLeft.getCurrentPosition() != 5000)){
-            linSlideLeft.setPower(0.6);
-            linSlideRight.setPower(0.6);
-            //slideOut(linSlideLeft.getCurrentPosition(), slideMax);
-        }else if(slideInTrigger){
+        if(slideOutTrigger && (linSlideLeft.getCurrentPosition() > -5000)){
             linSlideLeft.setPower(-0.6);
             linSlideRight.setPower(-0.6);
+            //slideOut(linSlideLeft.getCurrentPosition(), slideMax);
+        }else if(slideInTrigger && (linSlideLeft.getCurrentPosition() <= -2)){
+            linSlideLeft.setPower(0.6);
+            linSlideRight.setPower(0.6);
             //slideIn(linSlideLeft.getCurrentPosition());
+        }else {
+            linSlideLeft.setPower(0);
+            linSlideRight.setPower(0);
         }
 
         if(intakeCloseButton){
@@ -163,11 +172,11 @@ public class compModeTwo_Iterative extends OpMode{
     }
 
     public void intakeOpen() {
-        intakeServo.setPosition(0.75);
+        intakeServo.setPosition(0.25);
     }
 
     public void intakeClose() {
-        intakeServo.setPosition(0.1);
+        intakeServo.setPosition(0.75);
     }
     public void pivotRun(int e){
         if(e != 0) {
