@@ -43,17 +43,49 @@ public class external_methods  extends compModeTwo_Iterative{
         four.setPower(backRightPower);
     }
 
+
+    public static void drivetrain(int pos,double power,DcMotor one, DcMotor two,DcMotor three, DcMotor four){
+        one.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if(power>=0){
+            one.setPower(power);
+        }
+        else{
+            one.setPower(power*-1);
+        }
+        one.setTargetPosition(pos);
+        one.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if(one.isBusy()){
+            two.setPower(power);
+            three.setPower(power);
+            four.setPower(power);
+        }
+        else{
+            two.setPower(0);
+            three.setPower(0);
+            four.setPower(0);
+        }
+    }
     public static void reset_runWithoutEncoder(DcMotor one, DcMotor two) {
         one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         two.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         one.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Usually you want to use encoders
         two.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Unless you are using a limit switch
     }
+
+    public static void reset_runWithoutEncoder(DcMotor one){
+        one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        one.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
     public static void reset_runWithEncoder(DcMotor one, DcMotor two){
         one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         two.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         one.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public static void reset_runWithEncoder(DcMotor one){
+        one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        one.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public static void intakeOpen(Servo s) {

@@ -28,7 +28,7 @@ public class compModeTwo_Iterative extends OpMode{
     private Servo intakeServo = null;
    // private IMU imu = null;
     private double slideMax = -5000;
-    private int ZERO= 0, LOW_RUNG= 400, HIGH_RUNG= 600,LOW_BASET = 640, GROUND = 55, SUB = 150;
+    private int ZERO= 0, LOW_RUNG= 400, HIGH_RUNG= 600,LOW_BASET = 640, GROUND = 58, SUB = 150;
     private int pivotPose = 0;
     //private SparkFunOTOS imu;
     //private double e = 0.0;
@@ -79,8 +79,8 @@ public class compModeTwo_Iterative extends OpMode{
 
     @Override
     public void start() {
-        reset_runWithoutEncoder(linSlideLeft, linSlideRight);
-        reset_runWithEncoder(pivotOne, pivotTwo);
+        reset_runWithoutEncoder(linSlideLeft);
+        reset_runWithEncoder(pivotOne);
         runtime.reset();
         //resetYaw();
     }
@@ -141,11 +141,11 @@ public class compModeTwo_Iterative extends OpMode{
             reset_runWithEncoder(pivotOne, pivotTwo);
         }
 
-        pivotRun(pivotPose, pivotOne, pivotTwo);
+        pivotRun(pivotPose, pivotOne,pivotTwo);
 
         telemetry.addData("Pivot Encoder Pos", "%s, %s", pivotOne.getCurrentPosition(), pivotTwo.getCurrentPosition());
         telemetry.addData("Intake Pos", "%s",intakeServo.getPosition());
-        telemetry.addData("Lin Slide Encoder L | R", "%s, %s", linSlideLeft.getCurrentPosition(), linSlideRight.getCurrentPosition());
+        telemetry.addData("Lin Slide Encoder L | R", "%s, %s", linSlideLeft.getCurrentPosition());
         telemetry.update();
     }
 

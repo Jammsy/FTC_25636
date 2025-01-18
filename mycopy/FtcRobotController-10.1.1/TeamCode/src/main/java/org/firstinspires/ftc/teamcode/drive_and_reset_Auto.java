@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Thread.sleep;
-
+import static org.firstinspires.ftc.teamcode.external_methods.*;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Autonomous
-public class drive_and_reset_Auto extends OpMode{
+public class drive_and_reset_Auto extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -26,24 +26,20 @@ public class drive_and_reset_Auto extends OpMode{
     private DcMotor linSlideLeft = null;
     private DcMotor linSlideRight = null;
     private Servo intakeServo = null;
-    private IMU imu = null;
     private double slideMax = -5000;
-    private int ZERO= 0, HIGH_RUNG= 600;//LOW_RUNG= 400, HIGH_RUNG= 600,LOW_BASET = 640, GROUND = 55, SUB = 150;
-    private enum pivotStates {START, RAISE, SLIDE, INTAKE_CLOSE, INTAKE_OPEN, DRIVE};
+    private int ZERO = 0, HIGH_RUNG = 600;//LOW_RUNG= 400, HIGH_RUNG= 600,LOW_BASET = 640, GROUND = 55, SUB = 150;
+
+    private enum pivotStates {START, RAISE, SLIDE, INTAKE_CLOSE, INTAKE_OPEN, DRIVE}
+
+    ;
     private pivotStates pivotState = pivotStates.START;
     private int pivotPose = 0;
-
 
 
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
-        imu.initialize(parameters);
 
         leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFrontDrive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "leftBackDrive");
@@ -87,137 +83,131 @@ public class drive_and_reset_Auto extends OpMode{
 
     @Override
     public void start() {
-        resetSlideEncoders();
+
         runtime.reset();
-        resetYaw();
+
     }
 
     @Override
     public void loop() {
         linSlideLeft.setPower(0.8);
         linSlideRight.setPower(0.8);
-        drivetrain(leftFrontDrive.getCurrentPosition());
-        pivotRun(pivotPose);
-        telemetry.addData("Left Front Drive encoder pos", "%s %s", leftFrontDrive.getCurrentPosition() );
+        telemetry.addData("Left Front Drive encoder pos", "%s %s", leftFrontDrive.getCurrentPosition());
         telemetry.addData("Left Back Drive Encoder pos", "%s %s", leftBackDrive.getCurrentPosition());
         telemetry.addData("Right Front Drive encoder pos", "%s %s", rightFrontDrive.getCurrentPosition());
-        telemetry.addData("Right Back Drive Encoder Pos" , "%s %s", rightBackDrive.getCurrentPosition());
+        telemetry.addData("Right Back Drive Encoder Pos", "%s %s", rightBackDrive.getCurrentPosition());
 
-        switch(pivotState){
+        switch (pivotState) {
 
-            case START :
-                intakeClose();
+            case START:
+                intakeClose(intakeServo);
                 pivotState = pivotStates.RAISE;
 
                 break;
-            case DRIVE:
 
-
-
-            case RAISE :
+            case RAISE:
                 pivotPose = HIGH_RUNG;
+                pivotRun(pivotPose, pivotOne, pivotTwo);
                 linSlideLeft.setTargetPosition(-3500);
                 linSlideRight.setTargetPosition(-3500);
                 pivotState = pivotStates.SLIDE;
                 break;
-            case SLIDE :
+            case DRIVE:
+                drivetrain(5000, 0.5, leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive);
+                pivotState = pivotStates.SLIDE;
+                break;
+
+            case SLIDE:
+                runtime.reset();
                 linSlideLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linSlideRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                if (runtime.seconds() >= 3) {
+                    drivetrain(0, -0.7, leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive);
+                }
 
 
         }
 
-        pivotRun(pivotPose);
         telemetry.addData("Pivot Encoder Pos", "%s, %s", pivotOne.getCurrentPosition(), pivotTwo.getCurrentPosition());
         telemetry.addData("Lin Slide Encoder L | R", "%s, %s", linSlideLeft.getCurrentPosition(), linSlideRight.getCurrentPosition());
         telemetry.update();
     }
 
-    /*public void driveTrain(double y, double x, double rx, double botHeading) {
-        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-
-        rotX = rotX * 1.1;
-
-        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-        double frontLeftPower = (rotY + rotX + rx) / denominator;
-        double backLeftPower = (rotY - rotX + rx) / denominator;
-        double frontRightPower = (rotY - rotX - rx) / denominator;
-        double backRightPower = (rotY + rotX - rx) / denominator;
-
-        leftFrontDrive.setPower(frontLeftPower);
-        leftBackDrive.setPower(backLeftPower);
-        rightFrontDrive.setPower(frontRightPower);
-        rightBackDrive.setPower(backRightPower);
-    }*/
-    public void drivetrain(int current_pos){
-
+    private static void turnLeft(int pos, double power, DcMotor RF, DcMotor LB) {
+        RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if (power >= 0) {
+            RF.setPower(power);
+        } else {
+            RF.setPower(power * -1);
+        }
+        RF.setTargetPosition(pos);
+        RF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (RF.isBusy()) {
+            LB.setPower(power);
+        } else {
+            LB.setPower(0);
+        }
+    }
+    private static void turnRight(int pos, double power, DcMotor LF, DcMotor RB) {
+        LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        if (power >= 0) {
+            LF.setPower(power);
+        } else {
+            LF.setPower(power * -1);
+        }
+        LF.setTargetPosition(pos);
+        LF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (LF.isBusy()) {
+            RB.setPower(power);
+        } else {
+            RB.setPower(0);
+        }
     }
 
-    @Override
-    public void stop() {
-        //Good practice to stop motors in stop
-        linSlideLeft.setPower(0);
-        linSlideRight.setPower(0);
-        leftFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
-        pivotOne.setPower(0);
-        pivotTwo.setPower(0);
+    private static void moveLeft(int pos, double power, DcMotor LF, DcMotor LB, DcMotor RF, DcMotor RB){
+        LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LF.setPower(Math.abs(power));
+        LF.setTargetPosition(pos);
+        LF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if(LF.isBusy()){
+            RF.setPower(Math.abs(power));
+            LB.setPower(power);
+            RB.setPower(power);
+        }
+        else{
+            LB.setPower(0);
+            RF.setPower(0);
+            RB.setPower(0);
+        }
     }
+    private static void moveRight(int pos, double power, DcMotor RF, DcMotor RB, DcMotor LF, DcMotor LB) {
+        RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RB.setPower(Math.abs(power));
+        RB.setTargetPosition(pos);
+        RB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (RB.isBusy()) {
+            LB.setPower(Math.abs(power));
+            LF.setPower(power);
+            RF.setPower(power);
+        } else {
+            RF.setPower(0);
+            LF.setPower(0);
+            LB.setPower(0);
+        }
+    }    //cranberry sweet tea
 
-    public void resetSlideEncoders() {
-        linSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        linSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Usually you want to use encoders
-        linSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Unless you are using a limit switch
-    }
-
-    public void resetYaw() {
-        imu.resetYaw();
-    }
-
-    public void intakeOpen() {
-        intakeServo.setPosition(0.35);
-    }
-
-    public void intakeClose() {
-        intakeServo.setPosition(0.65);
-    }
-    public void pivotRun(int e){
-        if(e != 0) {
-            pivotOne.setPower(0.6);
-            pivotTwo.setPower(0.6);
-            pivotOne.setTargetPosition(e);
-            pivotTwo.setTargetPosition(e);
-            pivotOne.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            pivotTwo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }else{
+        @Override
+        public void stop () {
+            //Good practice to stop motors in stop
+            linSlideLeft.setPower(0);
+            linSlideRight.setPower(0);
+            leftFrontDrive.setPower(0);
+            leftBackDrive.setPower(0);
+            rightFrontDrive.setPower(0);
+            rightBackDrive.setPower(0);
             pivotOne.setPower(0);
             pivotTwo.setPower(0);
-            pivotOne.setTargetPosition(e);
-            pivotTwo.setTargetPosition(e);
         }
     }
 
-    public void slideOut(int pos, double max) {
-        if (pos < max) {
-            linSlideLeft.setPower(0.6);
-            linSlideRight.setPower(0.6);
-        } else {
-            linSlideLeft.setPower(0);
-            linSlideRight.setPower(0);
-        }
-    }
 
-    public void slideIn(int slidePos) {
-        if (slidePos > 0) {
-            linSlideLeft.setPower(-0.6); // Made negative to retract
-            linSlideRight.setPower(-0.6);
-        } else {
-            linSlideLeft.setPower(0);
-            linSlideRight.setPower(0);
-        }
-    }
-}
