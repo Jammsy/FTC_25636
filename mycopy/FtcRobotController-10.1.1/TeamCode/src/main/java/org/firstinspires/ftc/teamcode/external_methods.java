@@ -43,6 +43,19 @@ public class external_methods  extends compModeTwo_Iterative{
         four.setPower(backRightPower);
     }
 
+    public static void drivetrain(int pos, double power, DcMotor one, DcMotor two,DcMotor three, DcMotor four){
+        one.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        one.setPower(power);
+        one.setTargetPosition(pos);
+        one.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        do {
+            two.setPower(power);
+            three.setPower(power);
+            four.setPower(power);
+        }while(one.isBusy());
+
+    }
+
     public static void reset_runWithoutEncoder(DcMotor one, DcMotor two) {
         one.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         two.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

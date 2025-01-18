@@ -28,7 +28,7 @@ public class compModeTwo_Iterative extends OpMode{
     private Servo intakeServo = null;
    // private IMU imu = null;
     private double slideMax = -5000;
-    private int ZERO= 0, LOW_RUNG= 400, HIGH_RUNG= 600,LOW_BASET = 640, GROUND = 55, SUB = 150;
+    private int ZERO= 0, LOW_RUNG= 400, HIGH_RUNG= 600,LOW_BASET = 640, GROUND = 54, SUB = 150;
     private int pivotPose = 0;
     //private SparkFunOTOS imu;
     //private double e = 0.0;
