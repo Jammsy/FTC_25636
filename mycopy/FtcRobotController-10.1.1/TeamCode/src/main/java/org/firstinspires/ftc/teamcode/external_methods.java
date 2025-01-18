@@ -26,7 +26,7 @@ public class external_methods  extends compModeTwo_Iterative{
         three.setPower(frontRightPower);
         four.setPower(backRightPower);
     }
-
+//turt
     public static void drivetrain(double y,double x, double rx, double heading, DcMotor one, DcMotor two,DcMotor three, DcMotor four){
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,

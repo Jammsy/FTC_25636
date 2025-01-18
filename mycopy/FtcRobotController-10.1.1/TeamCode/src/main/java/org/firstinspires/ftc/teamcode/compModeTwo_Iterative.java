@@ -99,7 +99,7 @@ public class compModeTwo_Iterative extends OpMode{
 
         drivetrain(-gamepad1.left_stick_y, gamepad1.left_stick_x*1.1,-gamepad1.right_stick_x, leftFrontDrive, leftBackDrive,rightFrontDrive,rightBackDrive);
         //drivetrain(-gamepad1.left_stick_y, gamepad1.left_stick_x*1.1,-gamepad1.right_stick_x,bot_heading,leftFrontDrive, leftBackDrive,rightFrontDrive,rightBackDrive);
-
+//turt
         if (lowRungButton) {
             pivotPose = LOW_RUNG;
         }else if(highRungButton){
