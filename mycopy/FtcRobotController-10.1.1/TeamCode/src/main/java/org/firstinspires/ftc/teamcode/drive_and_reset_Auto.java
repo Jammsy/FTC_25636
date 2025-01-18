@@ -29,7 +29,7 @@ public class drive_and_reset_Auto extends OpMode {
     private double slideMax = -5000;
     private int ZERO = 0, HIGH_RUNG = 600;//LOW_RUNG= 400, HIGH_RUNG= 600,LOW_BASET = 640, GROUND = 55, SUB = 150;
 
-    private enum pivotStates {START, RAISE, SLIDE, INTAKE_CLOSE, INTAKE_OPEN, DRIVE}
+    private enum pivotStates {START, RAISE, SLIDE, INTAKE_CLOSE, INTAKE_OPEN, DRIVE, LEFT, RIGHT}
 
     ;
     private pivotStates pivotState = pivotStates.START;
@@ -124,6 +124,9 @@ public class drive_and_reset_Auto extends OpMode {
                 if (runtime.seconds() >= 3) {
                     drivetrain(0, -0.7, leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive);
                 }
+
+            //case LEFT:
+              //  moveLeft()
 
 
         }
