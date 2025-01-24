@@ -44,16 +44,24 @@ public class external_methods  extends compModeTwo_Iterative{
     }
 
     public static void drivetrain(int pos, double power, DcMotor one, DcMotor two,DcMotor three, DcMotor four){
-        one.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        one.setPower(power);
-        one.setTargetPosition(pos);
-        one.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        one.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        three.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        four.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        two.setPower(power);
+        three.setPower(power);
+        four.setPower(power);
+        two.setTargetPosition(pos);
+        three.setTargetPosition(pos);
+        four.setTargetPosition(pos);
+        two.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        three.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        four.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         do {
-            two.setPower(power+.2);
-            three.setPower(power);
-            four.setPower(power+.1);
-        }while(one.isBusy());
-
+            one.setPower(power);
+        }
+        while(three.isBusy());
+        one.setPower(0);
     }
 
     public static void reset_runWithoutEncoder(DcMotor one, DcMotor two) {
