@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.util.ElapsedTime;
+//import org.opencv.core.
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -27,11 +28,9 @@ public class compModeTwo_Iterative extends OpMode{
     private DcMotor linSlideRight = null;
     private Servo intakeServo = null;
     // private IMU imu = null;
-    private double slideMax = -5000;
-    private int ZERO= 0, LOW_RUNG= 400, HIGH_RUNG= 600,LOW_BASET = 640, GROUND = 52, SUB = 150;
+    private int ZERO= 0, LOW_RUNG= 400, HIGH_RUNG= 615,LOW_BASET = 640, GROUND = 53, SUB = 150;
     private int pivotPose = 0;
     //private SparkFunOTOS imu;
-    //private double e = 0.0;
 
     @Override
     public void init() {
@@ -63,15 +62,10 @@ public class compModeTwo_Iterative extends OpMode{
         pivotOne.setDirection(DcMotorSimple.Direction.FORWARD);
         pivotTwo.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        pivotOne.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        pivotTwo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         intakeServo.setDirection(Servo.Direction.FORWARD);
 
-        pivotOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        pivotTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linSlideLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        linSlideRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        reset_runWithEncoder(pivotOne, pivotTwo);
+        reset_runWithoutEncoder(linSlideLeft,linSlideRight);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -79,8 +73,6 @@ public class compModeTwo_Iterative extends OpMode{
 
     @Override
     public void start() {
-        reset_runWithoutEncoder(linSlideLeft, linSlideRight);
-        reset_runWithEncoder(pivotOne, pivotTwo);
         runtime.reset();
         //resetYaw();
     }
@@ -88,18 +80,16 @@ public class compModeTwo_Iterative extends OpMode{
     public void loop() {
         boolean lowRungButton = gamepad1.dpad_up;
         boolean highRungButton = gamepad1.dpad_right;
-        boolean submersibleButton = gamepad1.dpad_down;
+        boolean submersibleButton = gamepad1.dpad_left;
         boolean slideOutTrigger = gamepad1.right_bumper;
         boolean slideInTrigger = gamepad1.left_bumper;
         boolean intakeCloseButton = gamepad1.triangle;
         boolean pivotZeroButton = gamepad1.circle;
-        //boolean intakeOpenButton = gamepad1.cross;
+        boolean groundButton = gamepad1.dpad_down;
 
         //double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         drivetrain(-gamepad1.left_stick_y, gamepad1.left_stick_x*1.1,-gamepad1.right_stick_x, leftFrontDrive, leftBackDrive,rightFrontDrive,rightBackDrive);
-        //drivetrain(-gamepad1.left_stick_y, gamepad1.left_stick_x*1.1,-gamepad1.right_stick_x,bot_heading,leftFrontDrive, leftBackDrive,rightFrontDrive,rightBackDrive);
-//turt
         if (lowRungButton) {
             pivotPose = LOW_RUNG;
         }else if(highRungButton){
@@ -108,37 +98,36 @@ public class compModeTwo_Iterative extends OpMode{
             pivotPose = SUB;
         }else if(pivotZeroButton){
             pivotPose = ZERO;
-        }else{
+        }else if(groundButton){
             pivotPose = GROUND;
         }
 
         if((linSlideLeft.getCurrentPosition() > -5000) && slideOutTrigger){
-            linSlideLeft.setPower(-0.75);
-            linSlideRight.setPower(-0.75);
-            //slideOut(linSlideLeft.getCurrentPosition(), slideMax);
+            linSlideLeft.setPower(-0.8);
+            linSlideRight.setPower(-0.8);
         }else if(slideInTrigger && (linSlideLeft.getCurrentPosition() <= -2)){
-            linSlideLeft.setPower(0.75);
-            linSlideRight.setPower(0.75);
-            //slideIn(linSlideLeft.getCurrentPosition());
+            linSlideLeft.setPower(0.8);
+            linSlideRight.setPower(0.8);
         }else {
             linSlideLeft.setPower(0);
             linSlideRight.setPower(0);
         }
 
+
         if(intakeCloseButton){
-            //e+=0.01;
             intakeClose(intakeServo);
         }else{
             intakeOpen(intakeServo);
-            //intakeClose(e);
         }
 
-        if (gamepad1.options) {
-            //resetYaw();
-        }else if(gamepad1.touchpad){
+        if(gamepad1.touchpad){
             reset_runWithoutEncoder(linSlideLeft, linSlideRight);
         }else if(gamepad1.share){
             reset_runWithEncoder(pivotOne, pivotTwo);
+        }
+
+        if(gamepad1.right_trigger > 0.5){
+            pivotPose = GROUND;
         }
 
         pivotRun(pivotPose, pivotOne, pivotTwo);
