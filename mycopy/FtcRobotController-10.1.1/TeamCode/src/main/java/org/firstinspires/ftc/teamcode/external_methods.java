@@ -74,13 +74,11 @@ public class external_methods{
         one.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         two.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-
     public static void intakeOpen(Servo s) {
         //0.65
         s.setPosition(0.5);
 
     }
-
     public static void intakeClose(Servo s) {
         //0.75
         s.setPosition(0.85);
@@ -100,7 +98,6 @@ public class external_methods{
             two.setTargetPosition(e);
         }
     }
-
     /*public static void configureIMU(SparkFunOTOS x){
         x.setLinearUnit(DistanceUnit.INCH);
         x.setAngularUnit(AngleUnit.DEGREES);

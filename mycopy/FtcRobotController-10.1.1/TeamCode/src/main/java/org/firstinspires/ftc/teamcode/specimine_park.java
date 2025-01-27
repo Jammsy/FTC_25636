@@ -19,8 +19,7 @@ import java.util.TimerTask;
 
 //turt
 @Autonomous
-public class drive_and_reset_Auto extends OpMode{
-    private ElapsedTime runtime = new ElapsedTime();
+public class specimine_park extends OpMode{
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -32,7 +31,7 @@ public class drive_and_reset_Auto extends OpMode{
     private Servo intakeServo = null;
     private double slideMax = -5000;
     private int ZERO= 0, HIGH_RUNG= 596;//LOW_RUNG= 400, HIGH_RUNG= 600,LOW_BASET = 640, GROUND = 55, SUB = 150;
-    private enum pivotStates {START, RAISE, SLIDE,DRIVE,MLEFT,MRIGHT,TLEFT,TRIGHT, END};
+    private enum pivotStates {START, RAISE, SLIDE,DRIVE,BACKUP,MRIGHT, END};
     private pivotStates pivotState = pivotStates.START;
     private int pivotPose = 0;
 
@@ -75,43 +74,46 @@ public class drive_and_reset_Auto extends OpMode{
 
     @Override
     public void start() {
-        runtime.reset();
         intakeClose(intakeServo);
+        intakeServo.setPosition(0.85);
     }
 
     @Override
     public void loop() {
+        intakeServo.setPosition(0.85);
         intakeClose(intakeServo);
         switch(pivotState){
 
             case START :
-                intakeClose(intakeServo);
                 pivotState = pivotStates.RAISE;
                 break;
 
             case RAISE :
-                intakeClose(intakeServo);
                 pivotPose = HIGH_RUNG;
                 pivotRun(pivotPose, pivotOne, pivotTwo);
                 pivotState = pivotStates.DRIVE;
                 break;
 
             case DRIVE:
-                intakeClose(intakeServo);
                 slide(2, -0.68, linSlideRight, linSlideLeft);
-                drivetrain(2, 0.3, leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive);
+                drivetrain(2, 0.27);
                 pivotState = pivotStates.SLIDE;
                 break;
 
             case SLIDE :
-                intakeClose(intakeServo);
                 slide(2,0.7, linSlideRight, linSlideLeft);
                 pivotRun(1, pivotOne, pivotTwo);
-                drivetrain(1, -0.3, leftFrontDrive,leftBackDrive,rightFrontDrive,rightBackDrive);
+                drivetrain(1, -0.52);
+                pivotState = pivotStates.MRIGHT;
+                break;
+
+            case MRIGHT:
+                strafe(3, 0.4);
                 pivotState = pivotStates.END;
                 break;
 
             default:
+                intakeServo.setPosition(0.85);
                 linSlideLeft.setPower(0);
                 linSlideRight.setPower(0);
                 leftFrontDrive.setPower(0);
@@ -132,52 +134,49 @@ public class drive_and_reset_Auto extends OpMode{
         telemetry.addData("Lin Slide Encoder L | R", "%s, %s", linSlideLeft.getCurrentPosition(), linSlideRight.getCurrentPosition());
         telemetry.update();
     }
-    private void moveRight(int time, double power, DcMotor RF, DcMotor RB, DcMotor LF, DcMotor LB) {
+    private void strafe(int time, double power) {
         ElapsedTime runtime = new ElapsedTime();
-        LF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while(runtime.seconds() < time){
-            LF.setPower(0.7);
-            LB.setPower(-0.7);
-            RF.setPower(0.7);
-            RB.setPower(-0.7);
+            leftFrontDrive.setPower((power + 0.045));
+            leftBackDrive.setPower(-(power));
+            rightFrontDrive.setPower(-(power));
+            rightBackDrive.setPower(power);
         }
-        LF.setPower(0);
-        LB.setPower(0);
-        RF.setPower(0);
-        RB.setPower(0);
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
     }
-    private void moveLeft(int time, double power, DcMotor LF, DcMotor LB, DcMotor RF, DcMotor RB){
+
+    private void turn(int time, double power){
         ElapsedTime runtime = new ElapsedTime();
-        LF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while(runtime.seconds() < time){
-            LF.setPower(-0.7);
-            LB.setPower(0.7);
-            RF.setPower(-0.7);
-            RB.setPower(0.7);
+            leftFrontDrive.setPower(-(power + 0.045));
+            leftBackDrive.setPower(-(power));
+            rightFrontDrive.setPower(power);
+            rightBackDrive.setPower(power);
         }
-        LF.setPower(0);
-        LB.setPower(0);
-        RF.setPower(0);
-        RB.setPower(0);
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
     }
-    private void drivetrain(double time, double power, DcMotor one, DcMotor two,DcMotor three, DcMotor four){
+    private void drivetrain(double time, double power){
         ElapsedTime timer = new ElapsedTime();
         while(timer.seconds() <= time){
-            one.setPower(power);
-            two.setPower(power);
-            three.setPower(power);
-            four.setPower(power);
+            if(power <0) {
+                leftFrontDrive.setPower((power - 0.045));
+            }else {
+                leftFrontDrive.setPower((power + 0.04));
+            }
+            leftBackDrive.setPower(power);
+            rightFrontDrive.setPower(power);
+            rightBackDrive.setPower(power);
         }
-        one.setPower(0);
-        two.setPower(0);
-        three.setPower(0);
-        four.setPower(0);
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
     }
     private void slide(double time, double power, DcMotor one, DcMotor two){
         ElapsedTime times = new ElapsedTime();

@@ -28,7 +28,7 @@ public class compModeTwo_Iterative extends OpMode{
     private DcMotor linSlideRight = null;
     private Servo intakeServo = null;
     // private IMU imu = null;
-    private int ZERO= 0, LOW_RUNG= 400, HIGH_RUNG= 615,LOW_BASET = 640, GROUND = 53, SUB = 150;
+    private int ZERO= 0, LOW_RUNG= 400, HIGH_RUNG= 615,LOW_BASET = 640, GROUND = 40, SUB = 150;
     private int pivotPose = 0;
     //private SparkFunOTOS imu;
 
@@ -87,19 +87,23 @@ public class compModeTwo_Iterative extends OpMode{
         boolean pivotZeroButton = gamepad1.circle;
         boolean groundButton = gamepad1.dpad_down;
 
-        //double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
         drivetrain(-gamepad1.left_stick_y, gamepad1.left_stick_x*1.1,-gamepad1.right_stick_x, leftFrontDrive, leftBackDrive,rightFrontDrive,rightBackDrive);
+
         if (lowRungButton) {
-            pivotPose = LOW_RUNG;
+           // pivotPose = LOW_RUNG;
+            pivotRun(LOW_RUNG, pivotOne, pivotTwo);
         }else if(highRungButton){
-            pivotPose = HIGH_RUNG;
+           // pivotPose = HIGH_RUNG;
+            pivotRun(HIGH_RUNG, pivotOne, pivotTwo);
         }else if(submersibleButton) {
-            pivotPose = SUB;
+           // pivotPose = SUB;
+            pivotRun(SUB, pivotOne, pivotTwo);
         }else if(pivotZeroButton){
-            pivotPose = ZERO;
+           // pivotPose = ZERO;
+            pivotRun(ZERO, pivotOne, pivotTwo);
         }else if(groundButton){
-            pivotPose = GROUND;
+           // pivotPose = GROUND;
+            pivotRun(GROUND, pivotOne, pivotTwo);
         }
 
         if((linSlideLeft.getCurrentPosition() > -5000) && slideOutTrigger){
@@ -126,11 +130,7 @@ public class compModeTwo_Iterative extends OpMode{
             reset_runWithEncoder(pivotOne, pivotTwo);
         }
 
-        if(gamepad1.right_trigger > 0.5){
-            pivotPose = GROUND;
-        }
-
-        pivotRun(pivotPose, pivotOne, pivotTwo);
+        //pivotRun(pivotPose, pivotOne, pivotTwo);
 
         telemetry.addData("Pivot Encoder Pos", "%s, %s", pivotOne.getCurrentPosition(), pivotTwo.getCurrentPosition());
         telemetry.addData("Intake Pos", "%s",intakeServo.getPosition());
