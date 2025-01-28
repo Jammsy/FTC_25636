@@ -97,13 +97,13 @@ public class specimine_hang extends OpMode{
             case SLIDE :
                 slide(2,0.7);
                 pivotRun(1, pivotOne, pivotTwo);
-                drivetrain(1, -0.52);
+                drivetrain(1, -0.46);
                 pivotState = pivotStates.MLEFT;
                 break;
 
             case MLEFT:
                 strafe(2, -0.6);
-                drivetrain(2, 0.4);
+                drivetrain(3, 0.4);
                 pivotState = pivotStates.TLEFT;
                 break;
 
