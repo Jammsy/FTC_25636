@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
@@ -23,6 +24,7 @@ public class specimine_hang extends OpMode{
     private DcMotor linSlideLeft = null;
     private DcMotor linSlideRight = null;
     private Servo intakeServo = null;
+    private TouchSensor slideLimit = null;
     private double slideMax = -5000;
     private int ZERO= 0, HIGH_RUNG= 596;//LOW_RUNG= 400, HIGH_RUNG= 600,LOW_BASET = 640, GROUND = 55, SUB = 150;
     private enum pivotStates {START, RAISE, SLIDE,DRIVE,BACKUP,MLEFT,TLEFT, END};
@@ -44,6 +46,7 @@ public class specimine_hang extends OpMode{
         linSlideLeft = hardwareMap.get(DcMotor.class, "linSlideLeft");
         linSlideRight = hardwareMap.get(DcMotor.class, "linSlideRight");
         intakeServo = hardwareMap.get(Servo.class, "intakeServo");
+        slideLimit = hardwareMap.get(TouchSensor.class, "slideTouchLimit");
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -140,7 +143,11 @@ public class specimine_hang extends OpMode{
     private void strafe(int time, double power) {
         ElapsedTime runtime = new ElapsedTime();
         while(runtime.seconds() < time){
-            leftFrontDrive.setPower((power + 0.045));
+            if(power < 0){
+                leftFrontDrive.setPower((power - 0.045));
+            }else{
+                leftFrontDrive.setPower((power + 0.045));
+            }
             leftBackDrive.setPower(-(power));
             rightFrontDrive.setPower(-(power));
             rightBackDrive.setPower(power);
@@ -154,7 +161,11 @@ public class specimine_hang extends OpMode{
     private void turn(int time, double power){
         ElapsedTime runtime = new ElapsedTime();
         while(runtime.seconds() < time){
-            leftFrontDrive.setPower(-(power + 0.045));
+            if(power < 0){
+                leftFrontDrive.setPower((power - 0.045));
+            }else{
+                leftFrontDrive.setPower(-(power + 0.045));
+            }
             leftBackDrive.setPower(-(power));
             rightFrontDrive.setPower(power);
             rightBackDrive.setPower(power);
@@ -183,12 +194,19 @@ public class specimine_hang extends OpMode{
     }
     private void slide(double time, double power){
         ElapsedTime times = new ElapsedTime();
-        while(times.seconds() <= time){
-            linSlideRight.setPower(power);
-            linSlideLeft.setPower(power);
+        if(power > 0){
+            while(times.seconds() <= time && !slideLimit.isPressed()){
+                linSlideLeft.setPower(power);
+                linSlideRight.setPower(power);
+            }
+        }else {
+            while (times.seconds() <= time) {
+                linSlideLeft.setPower(power);
+                linSlideRight.setPower(power);
+            }
         }
-        linSlideRight.setPower(0);
         linSlideLeft.setPower(0);
+        linSlideRight.setPower(0);
     }
     @Override
     public void stop() {

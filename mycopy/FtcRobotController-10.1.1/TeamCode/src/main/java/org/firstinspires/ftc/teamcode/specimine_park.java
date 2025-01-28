@@ -7,9 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -20,15 +22,16 @@ import java.util.TimerTask;
 //turt
 @Autonomous
 public class specimine_park extends OpMode{
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
-    private DcMotor pivotOne = null;
-    private DcMotor pivotTwo = null;
-    private DcMotor linSlideLeft = null;
-    private DcMotor linSlideRight = null;
+    private DcMotorEx leftFrontDrive = null;
+    private DcMotorEx leftBackDrive = null;
+    private DcMotorEx rightFrontDrive = null;
+    private DcMotorEx rightBackDrive = null;
+    private DcMotorEx pivotOne = null;
+    private DcMotorEx pivotTwo = null;
+    private DcMotorEx linSlideLeft = null;
+    private DcMotorEx linSlideRight = null;
     private Servo intakeServo = null;
+    private TouchSensor slideLimit = null;
     private double slideMax = -5000;
     private int ZERO= 0, HIGH_RUNG= 596;//LOW_RUNG= 400, HIGH_RUNG= 600,LOW_BASET = 640, GROUND = 55, SUB = 150;
     private enum pivotStates {START, RAISE, SLIDE,DRIVE,BACKUP,MRIGHT, END};
@@ -41,27 +44,28 @@ public class specimine_park extends OpMode{
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFrontDrive");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "leftBackDrive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
-        pivotOne = hardwareMap.get(DcMotor.class, "pivotOne");
-        pivotTwo = hardwareMap.get(DcMotor.class, "pivotTwo");
-        linSlideLeft = hardwareMap.get(DcMotor.class, "linSlideLeft");
-        linSlideRight = hardwareMap.get(DcMotor.class, "linSlideRight");
+        leftFrontDrive = hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
+        leftBackDrive = hardwareMap.get(DcMotorEx.class, "leftBackDrive");
+        rightFrontDrive = hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
+        rightBackDrive = hardwareMap.get(DcMotorEx.class, "rightBackDrive");
+        pivotOne = hardwareMap.get(DcMotorEx.class, "pivotOne");
+        pivotTwo = hardwareMap.get(DcMotorEx.class, "pivotTwo");
+        linSlideLeft = hardwareMap.get(DcMotorEx.class, "linSlideLeft");
+        linSlideRight = hardwareMap.get(DcMotorEx.class, "linSlideRight");
         intakeServo = hardwareMap.get(Servo.class, "intakeServo");
+        slideLimit = hardwareMap.get(TouchSensor.class, "slideTouchLimit");
 
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotorEx.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotorEx.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotorEx.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotorEx.Direction.FORWARD);
         linSlideRight.setDirection(DcMotorSimple.Direction.FORWARD);
         linSlideLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         pivotOne.setDirection(DcMotorSimple.Direction.FORWARD);
         pivotTwo.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        linSlideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        linSlideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        linSlideLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        linSlideRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         reset_runWithEncoder(pivotOne, pivotTwo);
         reset_runWithoutEncoder(linSlideLeft, linSlideRight);
@@ -95,13 +99,13 @@ public class specimine_park extends OpMode{
                 break;
 
             case DRIVE:
-                slide(2, -0.68, linSlideRight, linSlideLeft);
+                slide(2, -0.68);
                 drivetrain(2, 0.27);
                 pivotState = pivotStates.SLIDE;
                 break;
 
             case SLIDE :
-                slide(2,0.7, linSlideRight, linSlideLeft);
+                slide(2,0.7);
                 pivotRun(1, pivotOne, pivotTwo);
                 drivetrain(1, -0.52);
                 pivotState = pivotStates.MRIGHT;
@@ -178,14 +182,21 @@ public class specimine_park extends OpMode{
         rightFrontDrive.setPower(0);
         rightBackDrive.setPower(0);
     }
-    private void slide(double time, double power, DcMotor one, DcMotor two){
+    private void slide(double time, double power){
         ElapsedTime times = new ElapsedTime();
-        while(times.seconds() <= time){
-            one.setPower(power);
-            two.setPower(power);
+        if(power > 0){
+            while(times.seconds() <= time && !slideLimit.isPressed()){
+                linSlideLeft.setPower(power);
+                linSlideRight.setPower(power);
+            }
+        }else {
+            while (times.seconds() <= time) {
+                linSlideLeft.setPower(power);
+                linSlideRight.setPower(power);
+            }
         }
-        one.setPower(0);
-        two.setPower(0);
+        linSlideLeft.setPower(0);
+        linSlideRight.setPower(0);
     }
     @Override
     public void stop() {

@@ -6,11 +6,14 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 //import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.Gyroscope;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 //import org.opencv.core.
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -18,15 +21,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @TeleOp(name = "compModeTwo_iterative", group = "Iterative OpMode")
 public class compModeTwo_Iterative extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
-    private DcMotor pivotOne = null;
-    private DcMotor pivotTwo = null;
-    private DcMotor linSlideLeft = null;
-    private DcMotor linSlideRight = null;
+    private DcMotorEx leftFrontDrive = null;
+    private DcMotorEx leftBackDrive = null;
+    private DcMotorEx rightFrontDrive = null;
+    private DcMotorEx rightBackDrive = null;
+    private DcMotorEx pivotOne = null;
+    private DcMotorEx pivotTwo = null;
+    private DcMotorEx linSlideLeft = null;
+    private DcMotorEx linSlideRight = null;
     private Servo intakeServo = null;
+    private TouchSensor slideLimit = null;
     // private IMU imu = null;
     private int ZERO= 0, LOW_RUNG= 400, HIGH_RUNG= 615,LOW_BASET = 640, GROUND = 40, SUB = 150;
     private int pivotPose = 0;
@@ -43,15 +47,16 @@ public class compModeTwo_Iterative extends OpMode{
         imu.initialize(parameters);*/
 
         //imu = hardwareMap.get(SparkFunOTOS.class, "imu");
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFrontDrive");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "leftBackDrive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
-        pivotOne = hardwareMap.get(DcMotor.class, "pivotOne");
-        pivotTwo = hardwareMap.get(DcMotor.class, "pivotTwo");
-        linSlideLeft = hardwareMap.get(DcMotor.class, "linSlideLeft");
-        linSlideRight = hardwareMap.get(DcMotor.class, "linSlideRight");
+        leftFrontDrive = hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
+        leftBackDrive = hardwareMap.get(DcMotorEx.class, "leftBackDrive");
+        rightFrontDrive = hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
+        rightBackDrive = hardwareMap.get(DcMotorEx.class, "rightBackDrive");
+        pivotOne = hardwareMap.get(DcMotorEx.class, "pivotOne");
+        pivotTwo = hardwareMap.get(DcMotorEx.class, "pivotTwo");
+        linSlideLeft = hardwareMap.get(DcMotorEx.class, "linSlideLeft");
+        linSlideRight = hardwareMap.get(DcMotorEx.class, "linSlideRight");
         intakeServo = hardwareMap.get(Servo.class, "intakeServo");
+        slideLimit = hardwareMap.get(TouchSensor.class, "slideTouchLimit");
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -106,15 +111,10 @@ public class compModeTwo_Iterative extends OpMode{
             pivotRun(GROUND, pivotOne, pivotTwo);
         }
 
-        if((linSlideLeft.getCurrentPosition() > -5000) && slideOutTrigger){
-            linSlideLeft.setPower(-0.8);
-            linSlideRight.setPower(-0.8);
-        }else if(slideInTrigger && (linSlideLeft.getCurrentPosition() <= -2)){
-            linSlideLeft.setPower(0.8);
-            linSlideRight.setPower(0.8);
-        }else {
-            linSlideLeft.setPower(0);
-            linSlideRight.setPower(0);
+        if(slideOutTrigger){
+            slide(linSlideLeft.getCurrentPosition(), -0.8);
+        }else if(slideInTrigger && !slideLimit.isPressed()){
+            slide(linSlideLeft.getCurrentPosition(), 0.8);
         }
 
 
@@ -138,6 +138,15 @@ public class compModeTwo_Iterative extends OpMode{
         telemetry.update();
     }
 
+    private void slide(int current_position, double power){
+        if(current_position >= -5000 && current_position < 1) {
+            linSlideLeft.setPower(power);
+            linSlideRight.setPower(power);
+        }else{
+            linSlideLeft.setPower(0);
+            linSlideRight.setPower(0);
+        }
+    }
     /*public void driveTrain(double y, double x, double rx, double botHeading) {
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
