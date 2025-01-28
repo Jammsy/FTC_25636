@@ -102,7 +102,7 @@ public class specimine_hang extends OpMode{
                 break;
 
             case MLEFT:
-                strafe(2, 0.6);
+                strafe(2, -0.6);
                 drivetrain(2, 0.4);
                 pivotState = pivotStates.TLEFT;
                 break;

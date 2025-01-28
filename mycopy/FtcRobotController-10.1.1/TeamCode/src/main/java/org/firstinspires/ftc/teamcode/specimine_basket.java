@@ -80,6 +80,7 @@ public class specimine_basket extends OpMode{
         switch(pivotState){
 
             case START :
+                intakeClose(intakeServo);
                 pivotState = pivotStates.RAISE;
                 break;
 
@@ -96,7 +97,7 @@ public class specimine_basket extends OpMode{
                 break;
 
             case SLIDE :
-                slide(2,0.7);
+                slide(2,0.8);
                 pivotRun(1, pivotOne, pivotTwo);
                 drivetrain(1, -0.52);
                 slide(2,-.7);
@@ -110,13 +111,13 @@ public class specimine_basket extends OpMode{
                 break;*/
 
             case TLEFT:
-                turn(1, 0.45);
+                turn(1, -0.45);
                 pivotRun(LOW_BASET, pivotOne, pivotTwo);
                 drivetrain(2, 0.27);
                 slide(2,.65);
                 intakeOpen(intakeServo);
-                drivetrain(2,-.52);
-                turn(1,-.45);
+                drivetrain(2,-.27);
+                turn(1,.45);
 
                 pivotState = pivotStates.END;
                 break;

@@ -85,6 +85,7 @@ public class specimine_park extends OpMode{
         switch(pivotState){
 
             case START :
+                intakeClose(intakeServo);
                 pivotState = pivotStates.RAISE;
                 break;
 
@@ -95,7 +96,7 @@ public class specimine_park extends OpMode{
                 break;
 
             case DRIVE:
-                slide(2, -0.68, linSlideRight, linSlideLeft);
+                slide(2, -0.72, linSlideRight, linSlideLeft);
                 drivetrain(2, 0.27);
                 pivotState = pivotStates.SLIDE;
                 break;
