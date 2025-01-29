@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Teleop;
 
 import static org.firstinspires.ftc.teamcode.external_methods.*;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,11 +11,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 //import org.opencv.core.
-import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 
 @TeleOp(name = "compModeTwo_iterative", group = "Iterative OpMode")
 public class compModeTwo_Iterative extends OpMode{
@@ -31,22 +28,16 @@ public class compModeTwo_Iterative extends OpMode{
     private DcMotorEx linSlideRight = null;
     private Servo intakeServo = null;
     private TouchSensor slideLimit = null;
-    // private IMU imu = null;
     private int ZERO= 0, LOW_RUNG= 400, HIGH_RUNG= 615,LOW_BASET = 640, GROUND = 40, SUB = 150;
     private int pivotPose = 0;
-    //private SparkFunOTOS imu;
+    private SparkFunOTOS imu;
 
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        /*imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
-        imu.initialize(parameters);*/
+        imu = hardwareMap.get(SparkFunOTOS.class, "imu");
 
-        //imu = hardwareMap.get(SparkFunOTOS.class, "imu");
         leftFrontDrive = hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
         leftBackDrive = hardwareMap.get(DcMotorEx.class, "leftBackDrive");
         rightFrontDrive = hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
@@ -110,13 +101,15 @@ public class compModeTwo_Iterative extends OpMode{
            // pivotPose = GROUND;
             pivotRun(GROUND, pivotOne, pivotTwo);
         }
-
-        if(slideOutTrigger){
-            slide(linSlideLeft.getCurrentPosition(), -0.8);
+        if(slideOutTrigger) {
+            if(linSlideLeft.getCurrentPosition() >= -5000){
+               slide(-0.8);
+            }
         }else if(slideInTrigger && !slideLimit.isPressed()){
-            slide(linSlideLeft.getCurrentPosition(), 0.8);
+            slide(0.8);
+        }else{
+            slide(0);
         }
-
 
         if(intakeCloseButton){
             intakeClose(intakeServo);
@@ -134,18 +127,16 @@ public class compModeTwo_Iterative extends OpMode{
 
         telemetry.addData("Pivot Encoder Pos", "%s, %s", pivotOne.getCurrentPosition(), pivotTwo.getCurrentPosition());
         telemetry.addData("Intake Pos", "%s",intakeServo.getPosition());
+        telemetry.addData("Slide Touch Debug :", slideLimit.isPressed());
         telemetry.addData("Lin Slide Encoder L | R", "%s, %s", linSlideLeft.getCurrentPosition(), linSlideRight.getCurrentPosition());
         telemetry.update();
     }
 
-    private void slide(int current_position, double power){
-        if(current_position >= -5000 && current_position < 1) {
+    private void slide(double power){
             linSlideLeft.setPower(power);
             linSlideRight.setPower(power);
-        }else{
             linSlideLeft.setPower(0);
             linSlideRight.setPower(0);
-        }
     }
     /*public void driveTrain(double y, double x, double rx, double botHeading) {
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);

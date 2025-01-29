@@ -98,10 +98,10 @@ public class external_methods{
             two.setTargetPosition(e);
         }
     }
-    /*public static void configureIMU(SparkFunOTOS x){
+    public static void configureIMU(SparkFunOTOS x){
         x.setLinearUnit(DistanceUnit.INCH);
         x.setAngularUnit(AngleUnit.DEGREES);
         SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
         x.setOffset(offset);
-    }*/
+    }
 }
