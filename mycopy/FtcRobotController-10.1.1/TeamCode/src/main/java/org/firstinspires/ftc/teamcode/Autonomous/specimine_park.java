@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import static java.lang.Thread.sleep;
-import static org.firstinspires.ftc.teamcode.external_methods.*;
+import static org.firstinspires.ftc.teamcode.Teleop.external_methods.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;

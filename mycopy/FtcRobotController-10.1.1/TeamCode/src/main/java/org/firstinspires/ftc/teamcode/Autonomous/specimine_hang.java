@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-import static org.firstinspires.ftc.teamcode.external_methods.intakeClose;
-import static org.firstinspires.ftc.teamcode.external_methods.pivotRun;
-import static org.firstinspires.ftc.teamcode.external_methods.reset_runWithEncoder;
-import static org.firstinspires.ftc.teamcode.external_methods.reset_runWithoutEncoder;
+import static org.firstinspires.ftc.teamcode.Teleop.external_methods.intakeClose;
+import static org.firstinspires.ftc.teamcode.Teleop.external_methods.pivotRun;
+import static org.firstinspires.ftc.teamcode.Teleop.external_methods.reset_runWithEncoder;
+import static org.firstinspires.ftc.teamcode.Teleop.external_methods.reset_runWithoutEncoder;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;

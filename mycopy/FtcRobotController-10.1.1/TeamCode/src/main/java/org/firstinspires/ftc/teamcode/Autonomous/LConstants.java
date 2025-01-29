@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.pedropathing.localization.constants.*;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
