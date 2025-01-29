@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import static org.firstinspires.ftc.teamcode.utils.*;
-import static org.firstinspires.ftc.teamcode.Constants.IntakeConstants.*;
+
+import static org.firstinspires.ftc.teamcode.Constants.Constants.IntakeConstants.*;
 public class Intake {
 
     private Servo intake;

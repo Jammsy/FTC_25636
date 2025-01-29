@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
+import static java.lang.Thread.sleep;
 import static org.firstinspires.ftc.teamcode.utils.*;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,8 +11,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+//turt
 @Autonomous
-public class specimine_hang extends OpMode{
+public class specimine_park extends OpMode{
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -21,8 +24,8 @@ public class specimine_hang extends OpMode{
     private DcMotor linSlideRight = null;
     private Servo intakeServo = null;
     private double slideMax = -5000;
-    private int ZERO= 0, HIGH_RUNG= 596;//LOW_RUNG= 400, HIGH_RUNG= 600,LOW_BASET = 640, GROUND = 55, SUB = 150;
-    public enum pivotStates {START, RAISE, SLIDE,DRIVE,BACKUP,MLEFT,TLEFT, END};
+    private int ZERO= 0, HIGH_RUNG= 596;
+    private enum pivotStates {START, RAISE, SLIDE,DRIVE,BACKUP,MRIGHT, END};
     private pivotStates pivotState = pivotStates.START;
     private int pivotPose = 0;
 
@@ -65,14 +68,14 @@ public class specimine_hang extends OpMode{
 
     @Override
     public void start() {
-
         intakeServo.setPosition(0.85);
+        pivotTwo.setPower(0.65);
+        pivotOne.setPower(0.65);
     }
 
     @Override
     public void loop() {
         intakeServo.setPosition(0.85);
-
         switch(pivotState){
 
             case START :
@@ -86,29 +89,20 @@ public class specimine_hang extends OpMode{
                 break;
 
             case DRIVE:
-                slide(2, -0.68);
+                slide(2, -0.68, linSlideRight, linSlideLeft);
                 drivetrain(2, 0.27);
                 pivotState = pivotStates.SLIDE;
                 break;
 
             case SLIDE :
-                slide(2,0.7);
+                slide(2,0.7, linSlideRight, linSlideLeft);
                 pivotRun(1);
                 drivetrain(1, -0.52);
-                pivotState = pivotStates.MLEFT;
+                pivotState = pivotStates.MRIGHT;
                 break;
 
-            case MLEFT:
-                strafe(2, 0.6);
-                drivetrain(2, 0.4);
-                pivotState = pivotStates.TLEFT;
-                break;
-
-            case TLEFT:
-                turn(1, 0.45);
-                pivotRun(HIGH_RUNG);
-                drivetrain(1, 0.2);
-                pivotRun(0);
+            case MRIGHT:
+                strafe(3, 0.4);
                 pivotState = pivotStates.END;
                 break;
 
@@ -125,10 +119,6 @@ public class specimine_hang extends OpMode{
                 break;
         }
 
-        telemetry.addData("Left Front Drive encoder pos", "%s", leftFrontDrive.getCurrentPosition() );
-        telemetry.addData("Left Back Drive Encoder pos", "%s", leftBackDrive.getCurrentPosition());
-        telemetry.addData("Right Front Drive encoder pos", "%s", rightFrontDrive.getCurrentPosition());
-        telemetry.addData("Right Back Drive Encoder Pos" , "%s", rightBackDrive.getCurrentPosition());
         telemetry.addData("Pivot Encoder Pos", "%s, %s", pivotOne.getCurrentPosition(), pivotTwo.getCurrentPosition());
         telemetry.addData("Lin Slide Encoder L | R", "%s, %s", linSlideLeft.getCurrentPosition(), linSlideRight.getCurrentPosition());
         telemetry.update();
@@ -177,14 +167,14 @@ public class specimine_hang extends OpMode{
         rightFrontDrive.setPower(0);
         rightBackDrive.setPower(0);
     }
-    private void slide(double time, double power){
+    private void slide(double time, double power, DcMotor one, DcMotor two){
         ElapsedTime times = new ElapsedTime();
         while(times.seconds() <= time){
-            linSlideRight.setPower(power);
-            linSlideLeft.setPower(power);
+            one.setPower(power);
+            two.setPower(power);
         }
-        linSlideRight.setPower(0);
-        linSlideLeft.setPower(0);
+        one.setPower(0);
+        two.setPower(0);
     }
     private void pivotRun(int pos){
         pivotTwo.setTargetPosition(pos);

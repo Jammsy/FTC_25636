@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.pedropathing.localization.constants.OTOSConstants;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import static org.firstinspires.ftc.teamcode.utils.*;
-import static org.firstinspires.ftc.teamcode.Constants.*;
+import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Constants.Constants;
 
 public class Drivetrain {
     private DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;

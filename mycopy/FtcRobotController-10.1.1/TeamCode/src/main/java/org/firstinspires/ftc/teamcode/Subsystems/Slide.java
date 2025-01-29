@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import static org.firstinspires.ftc.teamcode.utils.*;
-import static org.firstinspires.ftc.teamcode.Constants.SlideConstants.*;
 
 public class Slide {
 
@@ -21,20 +20,26 @@ public class Slide {
         resetEncoders();
     }
 
-    public void slideOut(){
-        if(SL.getCurrentPosition() > -5000 && SR.getCurrentPosition() > -5000){
-            setPower(-0.8);
-        }else{
-            stopSlide();
+    public void slideOut(double power){
+        if(power !=0) {
+            if (SL.getCurrentPosition() > -5000 && SR.getCurrentPosition() > -5000) {
+                setPower(-(power));
+            } else {
+                stopSlide();
+            }
         }
+        stopSlide();
     }
 
-    public void slideIn(){
-        if(!slideLimit.isPressed()){
-            setPower(0.8);
-        }else{
-            stopSlide();
+    public void slideIn(double power){
+        if(power != 0) {
+            if (!slideLimit.isPressed()) {
+                setPower(power);
+            } else {
+                stopSlide();
+            }
         }
+        stopSlide();
     }
 
     private void resetEncoders(){
