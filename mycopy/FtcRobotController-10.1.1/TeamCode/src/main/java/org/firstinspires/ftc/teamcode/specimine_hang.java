@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.external_methods.intakeClose;
-import static org.firstinspires.ftc.teamcode.external_methods.pivotRun;
-import static org.firstinspires.ftc.teamcode.external_methods.reset_runWithEncoder;
-import static org.firstinspires.ftc.teamcode.external_methods.reset_runWithoutEncoder;
-
+import static org.firstinspires.ftc.teamcode.utils.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -25,7 +22,7 @@ public class specimine_hang extends OpMode{
     private Servo intakeServo = null;
     private double slideMax = -5000;
     private int ZERO= 0, HIGH_RUNG= 596;//LOW_RUNG= 400, HIGH_RUNG= 600,LOW_BASET = 640, GROUND = 55, SUB = 150;
-    private enum pivotStates {START, RAISE, SLIDE,DRIVE,BACKUP,MLEFT,TLEFT, END};
+    public enum pivotStates {START, RAISE, SLIDE,DRIVE,BACKUP,MLEFT,TLEFT, END};
     private pivotStates pivotState = pivotStates.START;
     private int pivotPose = 0;
 
@@ -68,14 +65,14 @@ public class specimine_hang extends OpMode{
 
     @Override
     public void start() {
-        intakeClose(intakeServo);
+
         intakeServo.setPosition(0.85);
     }
 
     @Override
     public void loop() {
         intakeServo.setPosition(0.85);
-        intakeClose(intakeServo);
+
         switch(pivotState){
 
             case START :
@@ -84,7 +81,7 @@ public class specimine_hang extends OpMode{
 
             case RAISE :
                 pivotPose = HIGH_RUNG;
-                pivotRun(pivotPose, pivotOne, pivotTwo);
+                pivotRun(pivotPose);
                 pivotState = pivotStates.DRIVE;
                 break;
 
@@ -96,7 +93,7 @@ public class specimine_hang extends OpMode{
 
             case SLIDE :
                 slide(2,0.7);
-                pivotRun(1, pivotOne, pivotTwo);
+                pivotRun(1);
                 drivetrain(1, -0.52);
                 pivotState = pivotStates.MLEFT;
                 break;
@@ -109,9 +106,9 @@ public class specimine_hang extends OpMode{
 
             case TLEFT:
                 turn(1, 0.45);
-                pivotRun(HIGH_RUNG, pivotOne, pivotTwo);
+                pivotRun(HIGH_RUNG);
                 drivetrain(1, 0.2);
-                pivotRun(0, pivotOne, pivotTwo);
+                pivotRun(0);
                 pivotState = pivotStates.END;
                 break;
 
@@ -127,7 +124,6 @@ public class specimine_hang extends OpMode{
                 pivotTwo.setPower(0);
                 break;
         }
-        intakeClose(intakeServo);
 
         telemetry.addData("Left Front Drive encoder pos", "%s", leftFrontDrive.getCurrentPosition() );
         telemetry.addData("Left Back Drive Encoder pos", "%s", leftBackDrive.getCurrentPosition());
@@ -189,6 +185,18 @@ public class specimine_hang extends OpMode{
         }
         linSlideRight.setPower(0);
         linSlideLeft.setPower(0);
+    }
+    private void pivotRun(int pos){
+        pivotTwo.setTargetPosition(pos);
+        pivotOne.setTargetPosition(pos);
+        if(pos != 0) {
+            pivotOne.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            pivotTwo.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        }else{
+            pivotTwo.setPower(0);
+            pivotOne.setPower(0);
+        }
+
     }
     @Override
     public void stop() {
