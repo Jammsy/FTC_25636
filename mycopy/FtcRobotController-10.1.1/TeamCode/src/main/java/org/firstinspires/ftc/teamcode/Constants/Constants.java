@@ -16,7 +16,7 @@ public class Constants {
        public static final double SLIDE_POWER = 1;
    }
    public static class IntakeConstants {
-       public static final double INTAKE_OPEN = 0.75;
+       public static final double INTAKE_OPEN = 0.68;
        public static final double INTAKE_CLOSE = 0.9;
     }
 }

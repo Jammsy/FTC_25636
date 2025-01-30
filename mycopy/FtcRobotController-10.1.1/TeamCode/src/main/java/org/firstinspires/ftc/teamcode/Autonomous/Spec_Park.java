@@ -1,23 +1,21 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Subsystems.*;
 import static org.firstinspires.ftc.teamcode.Constants.Constants.PivotConstants.*;
 
 @Autonomous
-public class Spec_Park extends OpMode {
-    ElapsedTime runtime = new ElapsedTime();;
+public class Spec_Park extends LinearOpMode {
+
     Drivetrain m_drive = null;
     Intake m_intake = null;
     Slide m_slide = null;
     Pivot m_pivot = null;
 
-
     @Override
-    public void init() {
+    public void runOpMode() throws InterruptedException {
         m_drive = new Drivetrain(hardwareMap);
         m_intake = new Intake(hardwareMap);
         m_slide = new Slide(hardwareMap);
@@ -25,43 +23,38 @@ public class Spec_Park extends OpMode {
 
         m_pivot.resetEncoders();
         m_slide.resetEncoders();
-    }
 
-    @Override
-    public void start(){
-        runtime.reset();
-        m_intake.closeIntake();
-    }
-
-    @Override
-    public void loop() {
-        while(runtime.seconds() <= 1){
+        waitForStart();
+        if (opModeIsActive()) {
             m_intake.closeIntake();
+            sleep(250);
+
             m_pivot.pivotRun(HIGH_RUNG);
-        }
-        while(runtime.seconds() <= 3){
-            m_slide.slideOut(-0.8);
-        }
-        while(runtime.seconds() <= 5){
+            sleep(500);
+
+            m_slide.setPower(0.8);
+            sleep(2000);
+
+            m_slide.stopSlide();
             m_drive.setMotorPower(0.545, 0.5, 0.5, 0.5);
-        }
-        while(runtime.seconds() <= 7){
-            m_slide.slideIn(1);
-        }
-        while(runtime.seconds() <= 8){
+            sleep(1550);
+
+            m_drive.setMotorPower(0, 0, 0, 0);
+            m_slide.setPower(-0.8);
+            sleep(2000);
+
             m_intake.openIntake();
             m_drive.setMotorPower(-1.045, -1, -1, -1);
-        }
-        while(runtime.seconds() <= 11){
-            m_pivot.pivotRun(GROUND);
-            m_drive.setMotorPower(-1.045, -1, 1, 1);
-        }
-    }
+            sleep(550);
 
-    @Override
-    public void stop(){
-        m_drive.stopDriving();
-        m_pivot.stopPivot();
-        m_slide.stopSlide();
+            m_drive.setMotorPower(0, 0, 0, 0);
+            m_pivot.pivotRun(GROUND);
+            m_drive.setMotorPower(0.745, -0.7, -0.7, 0.7);
+            sleep(2000);
+
+            m_drive.stopDriving();
+            m_pivot.stopPivot();
+            m_slide.stopSlide();
+        }
     }
 }
