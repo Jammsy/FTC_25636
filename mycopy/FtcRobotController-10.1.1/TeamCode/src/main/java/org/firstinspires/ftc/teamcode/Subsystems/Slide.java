@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -15,18 +16,17 @@ public class Slide {
         SR = hardwareMap.get(DcMotorEx.class, "linSlideRight");
         slideLimit = hardwareMap.get(TouchSensor.class, "slideTouchLimit");
 
+
         SR.setDirection(DcMotorEx.Direction.FORWARD);
         SL.setDirection(DcMotorEx.Direction.REVERSE);
+
+        reset_runWithoutEncoder(SL, SR);
         resetEncoders();
     }
 
     public void slideOut(double power){
         if(power !=0) {
-            if (SL.getCurrentPosition() > -5000 && SR.getCurrentPosition() > -5000) {
                 setPower(-(power));
-            } else {
-                stopSlide();
-            }
         }
         stopSlide();
     }
@@ -42,7 +42,14 @@ public class Slide {
         stopSlide();
     }
 
-    private void resetEncoders(){
+    public void slideClimb(){
+        SL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        SR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        if(!slideLimit.isPressed()){
+            setPower(1);
+        }
+    }
+    public void resetEncoders(){
         reset_runWithoutEncoder(SL, SR);
     }
 

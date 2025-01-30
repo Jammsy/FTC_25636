@@ -9,20 +9,23 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.Constants.Constants;
+import static org.firstinspires.ftc.teamcode.utils.*;
 
 public class Drivetrain {
     private DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
     public Drivetrain(HardwareMap hardwareMap){
-        frontLeftMotor = hardwareMap.get(DcMotorEx.class, "frontLeftDrive");
-        frontRightMotor = hardwareMap.get(DcMotorEx.class, "frontRightDrive");
-        backLeftMotor = hardwareMap.get(DcMotorEx.class, "backLeftDrive");
-        backRightMotor = hardwareMap.get(DcMotorEx.class, "backRightDrive");
+        frontLeftMotor = hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
+        frontRightMotor = hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
+        backLeftMotor = hardwareMap.get(DcMotorEx.class, "leftBackDrive");
+        backRightMotor = hardwareMap.get(DcMotorEx.class, "rightBackDrive");
 
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        setRunWithoutEncoder(frontLeftMotor, frontRightMotor);
+        setRunWithoutEncoder(backLeftMotor, backRightMotor);
     }
 
     public void stopDriving(){

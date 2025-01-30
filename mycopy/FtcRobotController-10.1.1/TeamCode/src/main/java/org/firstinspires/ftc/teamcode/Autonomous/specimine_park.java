@@ -4,13 +4,14 @@ import static java.lang.Thread.sleep;
 import static org.firstinspires.ftc.teamcode.utils.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+//@Disabled
 //turt
 @Autonomous
 public class specimine_park extends OpMode{
@@ -24,7 +25,7 @@ public class specimine_park extends OpMode{
     private DcMotor linSlideRight = null;
     private Servo intakeServo = null;
     private double slideMax = -5000;
-    private int ZERO= 0, HIGH_RUNG= 596;
+    private int ZERO= 0, HIGH_RUNG= 600;
     private enum pivotStates {START, RAISE, SLIDE,DRIVE,BACKUP,MRIGHT, END};
     private pivotStates pivotState = pivotStates.START;
     private int pivotPose = 0;

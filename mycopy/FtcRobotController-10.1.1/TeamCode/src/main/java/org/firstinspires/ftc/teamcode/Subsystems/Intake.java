@@ -13,10 +13,10 @@ public class Intake {
     }
 
     public void closeIntake(){
-        intake.setPosition(INTAKE_OPEN);
+        intake.setPosition(INTAKE_CLOSE);
     }
 
     public void openIntake(){
-        intake.setPosition(INTAKE_CLOSE);
+        intake.setPosition(INTAKE_OPEN);
     }
 }

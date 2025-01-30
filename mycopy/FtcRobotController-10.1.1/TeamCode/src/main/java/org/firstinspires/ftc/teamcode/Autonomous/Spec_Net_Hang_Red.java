@@ -7,11 +7,12 @@ import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.Constants.FConstants;
 import org.firstinspires.ftc.teamcode.Constants.LConstants;
-
+@Disabled
 @Autonomous
 public class Spec_Net_Hang_Red extends OpMode{
     private Follower follower = null;

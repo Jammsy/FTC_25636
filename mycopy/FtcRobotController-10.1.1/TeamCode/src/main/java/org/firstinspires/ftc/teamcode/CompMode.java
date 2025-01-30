@@ -37,14 +37,18 @@ public class CompMode extends OpMode {
     @Override
     public void loop() {
         // Drive control
-        m_drive.drive_Cartesian(gamepad1.left_stick_x * 1.1, -gamepad1.left_stick_y * 1.1, gamepad1.right_stick_x * 1.1);
+        m_drive.drive_Cartesian(gamepad1.left_stick_x * 1.1, -gamepad1.left_stick_y * 1.1, -gamepad1.right_stick_x * 1.1);
 
         // Pivot control
         if (gamepad1.dpad_right) m_pivot.pivotRun(HIGH_RUNG);
         else if (gamepad1.dpad_down) m_pivot.pivotRun(GROUND);
         else if (gamepad1.dpad_left) m_pivot.pivotRun(CLIMB);
-        else if (gamepad1.dpad_up) m_pivot.pivotRun(SUB);
+        //else if (gamepad1.dpad_up) m_pivot.pivotRun(SUB);
         else if (gamepad1.circle) m_pivot.pivotRun(ZERO);
+        else if(gamepad1.left_trigger > 0.2) m_pivot.pivotRun(WALL);
+
+        //ResetEncoders
+        if (gamepad1.touchpad) m_pivot.resetEncoders();
 
         // Intake control
         if (gamepad1.triangle) m_intake.closeIntake();
