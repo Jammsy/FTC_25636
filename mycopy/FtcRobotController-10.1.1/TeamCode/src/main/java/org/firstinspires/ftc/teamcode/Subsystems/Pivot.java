@@ -10,7 +10,7 @@ import static org.firstinspires.ftc.teamcode.utils.*;
 public class Pivot{
     private DcMotorEx PO, PT;
 
-    public Pivot(HardwareMap hardwareMap, double power){
+    public Pivot(HardwareMap hardwareMap){
         PO = hardwareMap.get(DcMotorEx.class, "pivotOne");
         PT = hardwareMap.get(DcMotorEx.class, "pivotTwo");
 

@@ -26,7 +26,8 @@ public class Slide {
 
     public void slideOut(double power){
         if(power !=0) {
-                setPower(-(power));
+            SL.setPower(-(power));
+            SR.setPower(-(power));
         }
         stopSlide();
     }
@@ -34,7 +35,8 @@ public class Slide {
     public void slideIn(double power){
         if(power != 0) {
             if (!slideLimit.isPressed()) {
-                setPower(power);
+                SL.setPower(power);
+                SR.setPower(power);
             } else {
                 stopSlide();
             }

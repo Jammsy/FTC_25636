@@ -11,8 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-//@Disabled
-//turt
+@Disabled
 @Autonomous
 public class specimine_park extends OpMode{
     private DcMotor leftFrontDrive = null;
@@ -90,7 +89,7 @@ public class specimine_park extends OpMode{
                 break;
 
             case DRIVE:
-                slide(2, -0.68, linSlideRight, linSlideLeft);
+                slide(2, -0.7, linSlideRight, linSlideLeft);
                 drivetrain(2, 0.27);
                 pivotState = pivotStates.SLIDE;
                 break;
