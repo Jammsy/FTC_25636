@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.firstinspires.ftc.teamcode.CompMode.ledStates.*;
+import static org.firstinspires.ftc.teamcode.CompModeDouble.ledStates.*;
 import static org.firstinspires.ftc.teamcode.Constants.Constants.SlideConstants.*;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
@@ -16,8 +16,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.Subsystems.Slide;
 
 import static org.firstinspires.ftc.teamcode.Constants.Constants.PivotConstants.*;
-@TeleOp(name = "CompMode", group = "Iterative Opmode")
-public class CompMode extends OpMode {
+@TeleOp(name = "CompModeDouble", group = "Iterative Opmode")
+public class CompModeDouble extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private Drivetrain m_drive = null;
     private Intake m_intake = null;
@@ -57,24 +57,24 @@ public class CompMode extends OpMode {
         m_drive.drive_Cartesian(gamepad1.left_stick_x * 1.1, -gamepad1.left_stick_y * 1.1, -gamepad1.right_stick_x * 1.1);
 
         // Pivot control
-        if (gamepad2.right_trigger > 0.3) m_pivot.pivotRun(HIGH_RUNG);
-        else if (gamepad2.dpad_down) m_pivot.pivotRun(GROUND);
-        else if (gamepad2.dpad_left) m_pivot.pivotRun(BASKET);
-        else if (gamepad2.dpad_up) m_pivot.pivotRun(SUB);
-        else if (gamepad2.circle) m_pivot.pivotRun(ZERO);
-        else if(gamepad2.left_trigger > 0.3) m_pivot.pivotRun(WALL);
+        if (gamepad1.right_trigger > 0.3) m_pivot.pivotRun(HIGH_RUNG);
+        else if (gamepad1.dpad_down) m_pivot.pivotRun(GROUND);
+        else if (gamepad1.dpad_left) m_pivot.pivotRun(BASKET);
+        else if (gamepad1.dpad_up) m_pivot.pivotRun(SUB);
+        else if (gamepad1.circle) m_pivot.pivotRun(ZERO);
+        else if(gamepad1.left_trigger > 0.3) m_pivot.pivotRun(WALL);
 
         //ResetEncoders
-        if (gamepad2.touchpad) m_pivot.resetEncoders();
+        if (gamepad1.touchpad) m_pivot.resetEncoders();
 
         // Intake control
-        if (gamepad2.triangle){m_intake.closeIntake(); LED.setPattern(ledStates.get(intake));}
+        if (gamepad1.triangle){m_intake.closeIntake(); LED.setPattern(ledStates.get(intake));}
         else{ m_intake.openIntake(); LED.setPattern(ledStates.get(Rainbow));}
 
         // Slide control
-        if (gamepad2.right_bumper) m_slide.slideOut(SLIDE_POWER);
+        if (gamepad1.right_bumper) m_slide.slideOut(SLIDE_POWER);
         else if (gamepad1.left_bumper) m_slide.slideIn(SLIDE_POWER);
-        else if(gamepad2.square) m_slide.slideClimb();LED.setPattern(ledStates.get(Climb));
+        else if(gamepad1.square) m_slide.slideClimb();LED.setPattern(ledStates.get(Climb));
     }
 
     @Override
