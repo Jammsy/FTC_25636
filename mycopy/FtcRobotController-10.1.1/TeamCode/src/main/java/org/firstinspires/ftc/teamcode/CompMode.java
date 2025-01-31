@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -11,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.Subsystems.Slide;
+import static org.firstinspires.ftc.teamcode.utils.*;
 import static org.firstinspires.ftc.teamcode.Constants.Constants.PivotConstants.*;
 @TeleOp(name = "CompMode", group = "Iterative Opmode")
 public class CompMode extends OpMode {
@@ -19,6 +24,8 @@ public class CompMode extends OpMode {
     private Intake m_intake = null;
     private Slide m_slide = null;
     private Pivot m_pivot = null;
+    private RevBlinkinLedDriver LED = null;
+    Map<String, RevBlinkinLedDriver.BlinkinPattern> ledStates= new HashMap<String,RevBlinkinLedDriver.BlinkinPattern>();
 
     @Override
     public void init() {
@@ -26,6 +33,16 @@ public class CompMode extends OpMode {
         m_intake = new Intake(hardwareMap);
         m_slide = new Slide(hardwareMap);
         m_pivot = new Pivot(hardwareMap);
+        LED = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
+
+        ledStates.put("Init", RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
+        ledStates.put("Intake", RevBlinkinLedDriver.BlinkinPattern.GREEN);
+        ledStates.put("Score", RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
+        ledStates.put("Rainbow", RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
+        ledStates.put("Off", RevBlinkinLedDriver.BlinkinPattern.BLACK);
+
+        LED.setPattern(ledStates.get("Init"));
+
         telemetry.addData("Status", "Initialized");
     }
 
@@ -51,8 +68,8 @@ public class CompMode extends OpMode {
         if (gamepad1.touchpad) m_pivot.resetEncoders();
 
         // Intake control
-        if (gamepad1.triangle) m_intake.closeIntake();
-        else m_intake.openIntake();
+        if (gamepad1.triangle){m_intake.closeIntake(); LED.setPattern(ledStates.get("Intake"));}
+        else{ m_intake.openIntake(); LED.setPattern(ledStates.get("Rainbow"));}
 
         // Slide control
         if (gamepad1.right_bumper) m_slide.slideOut(SLIDE_POWER);
