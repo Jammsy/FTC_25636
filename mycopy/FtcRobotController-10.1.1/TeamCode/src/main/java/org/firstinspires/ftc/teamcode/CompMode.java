@@ -73,7 +73,7 @@ public class CompMode extends OpMode {
 
         // Slide control
         if (gamepad2.right_bumper) m_slide.slideOut(SLIDE_POWER);
-        else if (gamepad1.left_bumper) m_slide.slideIn(SLIDE_POWER); LED.setPattern(ledStates.get(Score));;
+        else if (gamepad1.left_bumper) m_slide.slideIn(SLIDE_POWER);;
     }
 
     @Override

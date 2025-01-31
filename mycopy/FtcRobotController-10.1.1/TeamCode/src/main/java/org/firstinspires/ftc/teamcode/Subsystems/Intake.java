@@ -10,6 +10,7 @@ public class Intake {
 
     public Intake(HardwareMap hardwareMap){
         intake = hardwareMap.get(Servo.class, "intakeServo");
+        //intake.setDirection(Servo.Direction.REVERSE);
     }
 
     public void closeIntake(){
