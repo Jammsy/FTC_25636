@@ -2,19 +2,14 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 //import com.pedropathing.localization.constants.OTOSConstants;
 import com.qualcomm.hardware.rev.Rev9AxisImuOrientationOnRobot;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
-import static org.firstinspires.ftc.teamcode.utils.*;
+import static org.firstinspires.ftc.teamcode.UTILITIES.utils.*;
 
 public class Drivetrain {
     private IMU imu = null;
@@ -50,7 +45,7 @@ public class Drivetrain {
         setMotorPower(0, 0, 0, 0);
     }
 
-    public void setMotorPower(double FL, double FR, double BL, double BR) {
+    private void setMotorPower(double FL, double FR, double BL, double BR) {
         frontLeftMotor.setPower(FL);
         frontRightMotor.setPower(FR);
         backLeftMotor.setPower(BL);

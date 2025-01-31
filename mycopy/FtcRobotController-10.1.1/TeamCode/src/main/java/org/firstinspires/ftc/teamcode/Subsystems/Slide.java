@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import static org.firstinspires.ftc.teamcode.utils.*;
+import static org.firstinspires.ftc.teamcode.UTILITIES.utils.*;
 
 public class Slide {
 
@@ -59,7 +59,7 @@ public class Slide {
         setPower(0);
     }
 
-    public void setPower(double power){
+    private void setPower(double power){
         SL.setPower(power);
         SR.setPower(power);
     }

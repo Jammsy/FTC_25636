@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.Subsystems.Slide;
-import static org.firstinspires.ftc.teamcode.utils.*;
+
 import static org.firstinspires.ftc.teamcode.Constants.Constants.PivotConstants.*;
 @TeleOp(name = "CompMode", group = "Iterative Opmode")
 public class CompMode extends OpMode {
@@ -25,7 +25,7 @@ public class CompMode extends OpMode {
     private Pivot m_pivot = null;
     private RevBlinkinLedDriver LED = null;
     static Map<Enum, RevBlinkinLedDriver.BlinkinPattern> ledStates= new HashMap<Enum,RevBlinkinLedDriver.BlinkinPattern>();
-    static enum ledStates {Init, intake, Score, Rainbow, Off}
+    static enum ledStates {Init, intake, Climb, Rainbow, Off}
 
     @Override
     public void init() {
@@ -37,7 +37,7 @@ public class CompMode extends OpMode {
 
         ledStates.put(Init, RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
         ledStates.put(intake, RevBlinkinLedDriver.BlinkinPattern.GREEN);
-        ledStates.put(Score, RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
+        ledStates.put(Climb, RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
         ledStates.put(Rainbow, RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE);
         ledStates.put(Off, RevBlinkinLedDriver.BlinkinPattern.BLACK);
 
@@ -73,7 +73,8 @@ public class CompMode extends OpMode {
 
         // Slide control
         if (gamepad2.right_bumper) m_slide.slideOut(SLIDE_POWER);
-        else if (gamepad1.left_bumper) m_slide.slideIn(SLIDE_POWER);;
+        else if (gamepad1.left_bumper) m_slide.slideIn(SLIDE_POWER);
+        else if(gamepad2.square) m_slide.slideClimb();LED.setPattern(ledStates.get(Climb));
     }
 
     @Override

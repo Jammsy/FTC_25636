@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import static org.firstinspires.ftc.teamcode.Constants.Constants.PivotConstants.pivotSpeed;
-import static org.firstinspires.ftc.teamcode.utils.*;
+import static org.firstinspires.ftc.teamcode.UTILITIES.utils.*;
 public class Pivot{
     private DcMotorEx PO, PT;
 
@@ -23,7 +22,7 @@ public class Pivot{
     public void stopPivot(){
         setPower(0);
     }
-    public void setPower(double power){
+    private void setPower(double power){
         PO.setPower(power);
         PT.setPower(power);
     }
