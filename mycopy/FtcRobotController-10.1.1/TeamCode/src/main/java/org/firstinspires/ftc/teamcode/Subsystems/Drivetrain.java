@@ -19,7 +19,8 @@ import static org.firstinspires.ftc.teamcode.utils.*;
 public class Drivetrain {
     private IMU imu = null;
     private DcMotorEx frontLeftMotor, frontRightMotor, backLeftMotor, backRightMotor;
-    public Drivetrain(HardwareMap hardwareMap){
+
+    public Drivetrain(HardwareMap hardwareMap) {
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new Rev9AxisImuOrientationOnRobot(
                 Rev9AxisImuOrientationOnRobot.LogoFacingDirection.UP, Rev9AxisImuOrientationOnRobot.I2cPortFacingDirection.LEFT));
@@ -45,11 +46,11 @@ public class Drivetrain {
         setRunWithoutEncoder(backLeftMotor, backRightMotor);
     }
 
-    public void stopDriving(){
-        setMotorPower(0,0,0,0);
+    public void stopDriving() {
+        setMotorPower(0, 0, 0, 0);
     }
 
-    public void setMotorPower(double FL, double FR, double BL, double BR){
+    public void setMotorPower(double FL, double FR, double BL, double BR) {
         frontLeftMotor.setPower(FL);
         frontRightMotor.setPower(FR);
         backLeftMotor.setPower(BL);
@@ -72,8 +73,18 @@ public class Drivetrain {
 
         setMotorPower(FLP, FRP, BLP, BRP);
     }
+
+    public void encoderDrive(int position, double power){
+        reset_runWithEncoder(frontLeftMotor);
+        frontLeftMotor.setTargetPosition(position);
+        frontLeftMotor.setPower(power);
+        if(frontLeftMotor.getPowerFloat() && !(frontLeftMotor.getCurrentPosition()==position)){
+            frontRightMotor.setPower(power);
+            backLeftMotor.setPower(power);
+            backRightMotor.setPower(power);
+        }else {
+            stopDriving();
+        }
+        setRunWithoutEncoder(frontLeftMotor);
+    }
 }
-
-
-
-

@@ -90,7 +90,7 @@ public class specimine_park extends OpMode{
 
             case DRIVE:
                 slide(2, -0.7, linSlideRight, linSlideLeft);
-                drivetrain(2, 0.26);
+                drivetrain(2, 0.27);
                 pivotState = pivotStates.SLIDE;
                 break;
 

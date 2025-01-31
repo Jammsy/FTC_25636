@@ -36,18 +36,18 @@ public class Spec_Park extends LinearOpMode {
             sleep(2000);
 
             m_slide.stopSlide();
-            m_drive.setMotorPower(0.545, 0.5, 0.5, 0.5);
+            m_drive.encoderDrive(250,0.5);
             sleep(1550);
 
-            m_drive.setMotorPower(0, 0, 0, 0);
+            m_drive.stopDriving();
             m_slide.setPower(-0.8);
             sleep(2000);
 
             m_intake.openIntake();
-            m_drive.setMotorPower(-1.045, -1, -1, -1);
+            m_drive.encoderDrive(0, 0.7);
             sleep(550);
 
-            m_drive.setMotorPower(0, 0, 0, 0);
+            m_drive.stopDriving();
             m_pivot.pivotRun(GROUND);
             m_drive.setMotorPower(0.745, -0.7, -0.7, 0.7);
             sleep(2000);
