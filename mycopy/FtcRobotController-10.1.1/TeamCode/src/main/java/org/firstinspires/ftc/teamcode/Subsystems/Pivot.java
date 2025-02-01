@@ -22,7 +22,7 @@ public class Pivot{
     public void stopPivot(){
         setPower(0);
     }
-    private void setPower(double power){
+    public void setPower(double power){
         PO.setPower(power);
         PT.setPower(power);
     }

@@ -59,7 +59,7 @@ public class Slide {
         setPower(0);
     }
 
-    private void setPower(double power){
+    public void setPower(double power){
         SL.setPower(power);
         SR.setPower(power);
     }

@@ -45,7 +45,7 @@ public class Drivetrain {
         setMotorPower(0, 0, 0, 0);
     }
 
-    private void setMotorPower(double FL, double FR, double BL, double BR) {
+    public void setMotorPower(double FL, double FR, double BL, double BR) {
         frontLeftMotor.setPower(FL);
         frontRightMotor.setPower(FR);
         backLeftMotor.setPower(BL);
