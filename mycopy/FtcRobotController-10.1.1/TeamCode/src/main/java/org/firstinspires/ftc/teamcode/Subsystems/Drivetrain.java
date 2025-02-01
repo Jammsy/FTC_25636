@@ -52,6 +52,10 @@ public class Drivetrain {
         backRightMotor.setPower(BR);
     }
 
+    public void resetRobotHeading(){
+        imu.resetYaw();
+    }
+
     public void drive_Cartesian(double x, double y, double rx) {
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
@@ -70,16 +74,17 @@ public class Drivetrain {
     }
 
     public void encoderDrive(int position, double power){
-        reset_runWithEncoder(frontLeftMotor);
-        frontLeftMotor.setTargetPosition(position);
-        frontLeftMotor.setPower(power);
-        if(frontLeftMotor.getPowerFloat() && !(frontLeftMotor.getCurrentPosition()==position)){
+        reset_runWithEncoder(backLeftMotor);
+        backLeftMotor.setTargetPosition(position);
+        backLeftMotor.setPower(power);
+        if(backLeftMotor.getPowerFloat() && !(backLeftMotor.getCurrentPosition()==position)){
+            frontLeftMotor.setPower(power);
             frontRightMotor.setPower(power);
-            backLeftMotor.setPower(power);
             backRightMotor.setPower(power);
         }else {
             stopDriving();
+            setRunWithoutEncoder(backLeftMotor);
         }
-        setRunWithoutEncoder(frontLeftMotor);
+
     }
 }

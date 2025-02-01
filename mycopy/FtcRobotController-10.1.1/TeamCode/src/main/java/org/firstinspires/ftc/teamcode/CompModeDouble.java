@@ -67,6 +67,9 @@ public class CompModeDouble extends OpMode {
         //ResetEncoders
         if (gamepad2.touchpad) m_pivot.resetEncoders();
 
+        //ResetYaw
+        if(gamepad1.square) m_drive.resetRobotHeading();
+
         // Intake control
         if (gamepad2.triangle){m_intake.closeIntake(); LED.setPattern(ledStates.get(intake));}
         else{ m_intake.openIntake(); LED.setPattern(ledStates.get(Rainbow));}
@@ -74,7 +77,7 @@ public class CompModeDouble extends OpMode {
         // Slide control
         if (gamepad2.right_bumper) m_slide.slideOut(SLIDE_POWER);
         else if (gamepad2.left_bumper) m_slide.slideIn(SLIDE_POWER);
-        else if(gamepad2.square) m_slide.slideClimb(); m_pivot.pivotRun(GROUND);
+        else if(gamepad2.square) m_slide.slideClimb();
     }
 
     @Override

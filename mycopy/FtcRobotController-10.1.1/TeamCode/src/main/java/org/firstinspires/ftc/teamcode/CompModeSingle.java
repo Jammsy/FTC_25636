@@ -17,7 +17,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Slide;
 
 import static org.firstinspires.ftc.teamcode.Constants.Constants.PivotConstants.*;
 @TeleOp(name = "CompModeSingle", group = "Iterative Opmode")
-public class CompModeSingle extends OpMode {
+public class
+CompModeSingle extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private Drivetrain m_drive = null;
     private Intake m_intake = null;

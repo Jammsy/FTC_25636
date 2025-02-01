@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
-public class specimine_park extends OpMode{
+public class specimine_parkR extends OpMode{
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -89,7 +89,7 @@ public class specimine_park extends OpMode{
 
             case DRIVE:
                 slide(2, -0.7, linSlideRight, linSlideLeft);
-                drivetrain(2, 0.27);
+                drivetrain(1, 0.42);
                 pivotState = pivotStates.SLIDE;
                 break;
 
@@ -101,7 +101,7 @@ public class specimine_park extends OpMode{
                 break;
 
             case MRIGHT:
-                strafe(3, 0.4);
+                strafe(2, 0.6);
                 pivotState = pivotStates.END;
                 break;
 

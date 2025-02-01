@@ -6,7 +6,7 @@ public class Constants {
                ZERO = 0,
                CLIMB = 600,
                HIGH_RUNG = 600,
-               WALL = 330,
+               WALL = 344,
                GROUND = 43,
                SUB = 150,
                BASKET = 700;

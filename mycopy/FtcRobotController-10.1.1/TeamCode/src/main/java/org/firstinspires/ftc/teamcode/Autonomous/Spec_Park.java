@@ -32,24 +32,27 @@ public class Spec_Park extends LinearOpMode {
             m_pivot.pivotRun(HIGH_RUNG);
             sleep(500);
 
-            m_slide.setPower(0.8);
+            m_slide.slideOut(0.8);
             sleep(2000);
 
             m_slide.stopSlide();
             m_drive.encoderDrive(250,0.5);
-            sleep(1550);
+            sleep(1000);
 
             m_drive.stopDriving();
-            m_slide.setPower(-0.8);
+            m_slide.slideIn(.8);
+            m_slide.stopSlide();
             sleep(2000);
 
             m_intake.openIntake();
             m_drive.encoderDrive(0, 0.7);
-            sleep(550);
+            sleep(400);
 
             m_drive.stopDriving();
+            m_pivot.pivotRun(WALL);
+            m_pivot.pivotRun(SUB);
             m_pivot.pivotRun(GROUND);
-            m_drive.setMotorPower(0.745, -0.7, -0.7, 0.7);
+            m_drive.setMotorPower(0.735, -0.7, -0.7, 0.7);
             sleep(2000);
 
             m_drive.stopDriving();
