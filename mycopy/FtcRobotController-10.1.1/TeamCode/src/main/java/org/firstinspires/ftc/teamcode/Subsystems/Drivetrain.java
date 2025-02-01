@@ -74,9 +74,10 @@ public class Drivetrain {
     }
 
     public void encoderDrive(int position, double power){
-        reset_runWithEncoder(backLeftMotor);
+       setResetEncoder(backLeftMotor);
         backLeftMotor.setTargetPosition(position);
         backLeftMotor.setPower(power);
+        setRunWithEncoder(backLeftMotor);
         if(backLeftMotor.getPowerFloat() && !(backLeftMotor.getCurrentPosition()==position)){
             frontLeftMotor.setPower(power);
             frontRightMotor.setPower(power);

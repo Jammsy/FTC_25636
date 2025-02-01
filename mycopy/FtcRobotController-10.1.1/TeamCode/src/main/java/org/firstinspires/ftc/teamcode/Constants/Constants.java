@@ -7,7 +7,7 @@ public class Constants {
                CLIMB = 600,
                HIGH_RUNG = 600,
                WALL = 344,
-               GROUND = 43,
+               GROUND = 44,
                SUB = 150,
                BASKET = 700;
        public static final double pivotSpeed = 0.65;

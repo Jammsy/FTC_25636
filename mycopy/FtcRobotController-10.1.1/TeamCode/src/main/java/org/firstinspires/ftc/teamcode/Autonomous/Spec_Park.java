@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Subsystems.*;
 import static org.firstinspires.ftc.teamcode.Constants.Constants.PivotConstants.*;
 
+@Disabled
 @Autonomous
 public class Spec_Park extends LinearOpMode {
 
@@ -36,7 +38,7 @@ public class Spec_Park extends LinearOpMode {
             sleep(2000);
 
             m_slide.stopSlide();
-            m_drive.encoderDrive(250,0.5);
+            m_drive.encoderDrive(2000,0.5);
             sleep(1000);
 
             m_drive.stopDriving();
