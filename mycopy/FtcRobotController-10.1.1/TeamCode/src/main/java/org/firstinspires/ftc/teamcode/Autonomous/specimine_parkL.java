@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-@Disabled
 @Autonomous
 public class specimine_parkL extends OpMode{
     private DcMotor leftFrontDrive = null;
@@ -75,7 +74,7 @@ public class specimine_parkL extends OpMode{
 
     @Override
     public void loop() {
-        intakeServo.setPosition(0.85);
+        intakeServo.setPosition(0.9);
         switch(pivotState){
 
             case START :
@@ -90,19 +89,22 @@ public class specimine_parkL extends OpMode{
 
             case DRIVE:
                 slide(2, -0.7, linSlideRight, linSlideLeft);
-                drivetrain(1, 0.42);
+                drivetrain(1, 0);
+                /*pivotRun(344);
+                intakeServo.setPosition(0.65);
+                pivotRun(HIGH_RUNG);*/
                 pivotState = pivotStates.SLIDE;
                 break;
 
             case SLIDE :
                 slide(2,0.7, linSlideRight, linSlideLeft);
                 pivotRun(1);
-                drivetrain(1, -0.5);
+                drivetrain(1, 0);
                 pivotState = pivotStates.MLEFT;
                 break;
 
             case MLEFT:
-                strafe(2, -0.6);
+                strafe(2, 0);
                 pivotState = pivotStates.END;
                 break;
 

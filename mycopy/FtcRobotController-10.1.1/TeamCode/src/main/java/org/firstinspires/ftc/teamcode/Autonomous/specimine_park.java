@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
-public class specimine_parkR extends OpMode{
+public class specimine_park extends OpMode{
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -67,14 +67,14 @@ public class specimine_parkR extends OpMode{
 
     @Override
     public void start() {
-        intakeServo.setPosition(0.85);
+        intakeServo.setPosition(0.8);
         pivotTwo.setPower(0.65);
         pivotOne.setPower(0.65);
     }
 
     @Override
-    public void loop() {
-        intakeServo.setPosition(0.85);
+    public void loop(){
+        intakeServo.setPosition(0.8);
         switch(pivotState){
 
             case START :
@@ -82,14 +82,13 @@ public class specimine_parkR extends OpMode{
                 break;
 
             case RAISE :
-                pivotPose = HIGH_RUNG;
-                pivotRun(pivotPose);
+                pivotRun(HIGH_RUNG);
                 pivotState = pivotStates.DRIVE;
                 break;
 
             case DRIVE:
                 slide(2, -0.7, linSlideRight, linSlideLeft);
-                drivetrain(1, 0.42);
+                drivetrain(2, 0.26);
                 pivotState = pivotStates.SLIDE;
                 break;
 
@@ -176,6 +175,7 @@ public class specimine_parkR extends OpMode{
         two.setPower(0);
     }
     private void pivotRun(int pos){
+        intakeServo.setPosition(0.9);
         pivotTwo.setTargetPosition(pos);
         pivotOne.setTargetPosition(pos);
         if(pos != 0) {

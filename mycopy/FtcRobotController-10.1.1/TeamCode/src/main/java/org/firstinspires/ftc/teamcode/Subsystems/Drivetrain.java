@@ -70,7 +70,7 @@ public class Drivetrain {
         double FRP = (rotY - rotX - rx) / denominator;
         double BRP = (rotY + rotX - rx) / denominator;
 
-        setMotorPower(FLP, FRP, BLP, BRP);
+        setMotorPower((FLP - 0.15), (FRP - 0.15), (BLP - 0.15), (BRP - 0.15));
     }
 
     public void encoderDrive(int position, double power){

@@ -17,6 +17,6 @@ public class Constants {
    }
    public static class IntakeConstants {
        public static final double INTAKE_OPEN = 0.65;//0.68;
-       public static final double INTAKE_CLOSE = 1;//0.9;
+       public static final double INTAKE_CLOSE = 0.9;
     }
 }

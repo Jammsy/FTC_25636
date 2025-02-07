@@ -4,6 +4,7 @@ import static java.lang.Thread.sleep;
 import static org.firstinspires.ftc.teamcode.UTILITIES.utils.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -91,7 +92,7 @@ public class specimine_hang extends OpMode{
 
             case DRIVE:
                 slide(2, -0.7, linSlideRight, linSlideLeft);
-                drivetrain(1, 0.45);
+                drivetrain(1, 0.42);
                 pivotState = pivotStates.SLIDE;
                 break;
 
@@ -99,11 +100,11 @@ public class specimine_hang extends OpMode{
                 slide(2,0.7, linSlideRight, linSlideLeft);
                 pivotRun(1);
                 drivetrain(1, -0.5);
-                pivotState = pivotStates.MLEFT;
+                pivotState = pivotStates.END;
                 break;
 
-            case MLEFT:
-                strafe(1, -0.6);
+            /*case MLEFT:
+                strafe(1, -0.45);
                 pivotState = pivotStates.TOHANG;
                 break;
 
@@ -114,7 +115,7 @@ public class specimine_hang extends OpMode{
                 slide(1,-.7,linSlideLeft,linSlideRight);
                 drivetrain(1,.3);
                 pivotRun(ZERO);
-                pivotState=pivotStates.END;
+                pivotState=pivotStates.END;*/
             default:
                 intakeServo.setPosition(0.85);
                 linSlideLeft.setPower(0);
@@ -186,6 +187,7 @@ public class specimine_hang extends OpMode{
         two.setPower(0);
     }
     private void pivotRun(int pos){
+        intakeServo.setPosition(0.9);
         pivotTwo.setTargetPosition(pos);
         pivotOne.setTargetPosition(pos);
         if(pos != 0) {
